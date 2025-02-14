@@ -1,0 +1,38 @@
+
+spring:
+  application:
+    name: ScheduleGenerateAndTimesManagement
+  liquibase:
+    enabled: ${ENABLE_LIQUIBASE:true}
+    change-log: db/master.xml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/sgtm
+    username: postgres
+    password: 11111111
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 5
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        SQL_SLOW: info
+application:
+  security:
+    authentication:
+      jwt:
+        base64-secret: OhWwNOhKThUZT+0VUVfQyx6aJWcScDSecgPHfazq1XAMeckjJg+Yj8Guu1SaXH3bFpmbwlcqzFWLMWnAIhSsCz3EXytY1x3aBA07XQBwVNGAes/OD7BQYLIXmFdwCGdUFXHn0IgapXRQWCRWTLq1f/ZB9xUsnObY9CqLE1nPk46eD355MqwvDHMU5Lbd19/dFCFHlVS58xEE6AbudAnZpii65UTGVrcIIyNKmyM36238s98dY8TpqrejcMqttrn+xZnKyylG0it2HDo1JcdiqtNNlwnn/rbqiOtbKcRMetrOeoR6NEKKBmo33kX89dOzQVXwHaORxv8VdjOPzB0ilQ==
+        token-validity-in-seconds: 2592000
+        token-validity-in-seconds-for-remember-me: 2592000
+        refresh-token-validity-in-seconds: 2592000
