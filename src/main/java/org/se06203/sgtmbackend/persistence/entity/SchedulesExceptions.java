@@ -1,7 +1,8 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,18 +12,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "schedule_exception")
+@Document(collection = "schedules_exceptions")
 public class SchedulesExceptions {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "schedule_id", nullable = false)
-    private Schedules schedule;
+    private String id;
 
-    private LocalDate exceptionDate;
+
+
+    private String scheduleId;
+
+    private String exceptionDate;
     private String reason;
-    private LocalDateTime createdAt;
+    private String createdAt;
 }

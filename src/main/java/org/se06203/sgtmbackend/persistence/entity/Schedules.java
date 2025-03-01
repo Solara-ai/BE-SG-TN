@@ -1,7 +1,9 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
+
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import java.time.LocalDate;
@@ -13,36 +15,24 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "schedules")
+@Document(collection = "schedules")
 public class Schedules {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private String id;
 
-    @Column(nullable = false, length = 255)
+    private String userId;
+
     private String name;
 
-    @Column(length = 255)
     private String description;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private LocalDate date;
+    private String startTime;
+    private String endTime;
+    private String date;
     private boolean isException;
     private String repeat;
-    private LocalDateTime repeatEndDate;
+    private String repeatEndDate;
     private boolean remindMe;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_schedule_id")
-    private Schedules parentSchedule;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Categories category;
 }

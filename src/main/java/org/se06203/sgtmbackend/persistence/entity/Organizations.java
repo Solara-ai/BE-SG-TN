@@ -1,7 +1,9 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
+
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
@@ -11,20 +13,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "organization")
+@Document(collection = "organizations")
 public class Organizations {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private Users admin;
+    private String id;
 
-    @Column(nullable = false, length = 255)
+    private String adminId;
+
     private String name;
 
-    @OneToMany(mappedBy = "organization")
-    private List<UserOrganizationXref> userOrganizations;
+    private List<String> members;
+
 }

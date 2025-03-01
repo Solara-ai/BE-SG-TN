@@ -1,30 +1,31 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
 
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.lang.annotation.Documented;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "conversations")
+@Document(collection = "conversations")
 public class Conversations {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private String messageIds;
 
-    private LocalDateTime startedAt;
-    private LocalDateTime endedAt;
+    private List<String> userId;
 
-    @OneToMany(mappedBy = "conversation")
-    private List<Messages> messages;
+    private String startedAt;
+    private String endedAt;
+
 
 }

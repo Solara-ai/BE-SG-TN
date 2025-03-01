@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.se06203.sgtmbackend.persistence.repository.UserRolesRepository;
 import org.se06203.sgtmbackend.persistence.repository.UsersRepository;
 import org.se06203.sgtmbackend.ultis.Constants;
 import org.slf4j.MDC;
@@ -47,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/v3/api-docs",
             "/api/users/otp/"
     );
-    private final UserRolesRepository userRolesRepository;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -64,22 +63,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         bearerToken = bearerToken.substring(7);
         if (StringUtils.isNotEmpty(bearerToken) && this.jwtService.isTokenValid(bearerToken)) {
-            var email = jwtService.getEmailFromToken(bearerToken);
-            var role = jwtService.extractUserType(bearerToken);
-            userRepository.findByEmailAndRole(email, role)
+            var userId = jwtService.getLoginFromToken(bearerToken);
+            var role = jwtService.getRoleFromToken(bearerToken);
+            userRepository.findByIdAndRoles(userId, role)
                     .ifPresent(user -> {
-                        var zoneIdString = request.getHeader(TIME_ZONE);
-                        var zoneId = StringUtils.isBlank(zoneIdString) ? ZoneId.systemDefault() : ZoneId.of(zoneIdString);
-                        var userAuthorities = userRolesRepository.findAllByUserId(Constants.role.USER,user.getId());
-                        var sUser = SpringSecurityUser.fromUser(user, zoneId, userAuthorities.stream()
-                                .map(authority -> authority.getRole().toString())
-                                .toList(), Constants.role.USER);
+                        var sUser = SpringSecurityUser.fromUser(user);
                         var authentication = new UsernamePasswordAuthenticationToken(
                                 sUser, null, sUser.getAuthorities()
                         );
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        MDC.put(USER_MDC_KEY, SecurityUtils.getAuthenticatedUser().getId().toString());
+                        MDC.put(USER_MDC_KEY, SecurityUtils.getAuthenticatedUser().getId());
                         MDC.put(USER_AUTHORITY_MDC_KEY, String.join("|", SecurityUtils.getAuthenticatedUser().getAuthorities().stream()
                                 .map(Object::toString)
                                 .toList()));

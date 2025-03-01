@@ -1,5 +1,6 @@
 package org.se06203.sgtmbackend.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -10,11 +11,11 @@ import org.se06203.sgtmbackend.ultis.validation.ValidPasscode;
 @Builder
 public class EmailRequest {
 
-    @NonNull
+    @NotNull
     @ValidEmail
     private String email;
 
-    @NonNull
+    @NotNull
     @ValidPasscode
     private String password;
 }

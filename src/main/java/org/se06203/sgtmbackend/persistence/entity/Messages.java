@@ -1,7 +1,8 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
@@ -10,21 +11,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "messages")
+@Document(collection = "messages")
 public class Messages {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "conversation_id", nullable = false)
-    private Conversations conversation;
+    private String conversationId;
 
-    @Column(columnDefinition = "jsonb")
     private String message;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 }

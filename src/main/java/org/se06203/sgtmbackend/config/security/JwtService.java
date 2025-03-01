@@ -92,7 +92,7 @@ public class JwtService {
         return false;
     }
 
-    public String getEmailFromToken(String token) {
+    public String getLoginFromToken(String token) {
         return this.defaultJwtParserBuilder()
                 .build()
                 .parseSignedClaims(token)
@@ -143,6 +143,9 @@ public class JwtService {
 
     private JwtParserBuilder defaultJwtParserBuilder() {
         return Jwts.parser().verifyWith(secretKey);
+    }
+    public String getRoleFromToken(String bearerToken) {
+        return this.extractAuthority(bearerToken).name();
     }
 
     public record TokenInfo(String token, Long validity) {

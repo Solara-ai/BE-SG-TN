@@ -16,7 +16,7 @@ import java.util.*;
 @Getter
 @Setter
 public class SpringSecurityUser implements UserDetails, CredentialsContainer {
-    private final Long id;
+    private final String  id;
     private final String userName;
     private String password;
     private final Constants.role role;
@@ -27,7 +27,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
     private final String firstName;
     private final String lastName;
 
-    public SpringSecurityUser(Long id, //NOSONAR
+    public SpringSecurityUser(String id, //NOSONAR
                               String userName,
                               String password,
                               Constants.role role,

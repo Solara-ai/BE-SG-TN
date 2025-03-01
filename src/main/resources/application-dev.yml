@@ -2,26 +2,31 @@
 spring:
   application:
     name: ScheduleGenerateAndTimesManagement
-  liquibase:
-    enabled: ${ENABLE_LIQUIBASE:true}
-    change-log: db/master.xml
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/sgtm
-    username: postgres
-    password: 11111111
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
+
+  data:
+    mongodb:
+      uri: mongodb+srv://xuka:030404@scheduledb.pg41q.mongodb.net/ScheduleDB
+      auto-index-creation: true
+
+
+
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 'nxuankhanh401@gmail.com'
+    password: 'dvpi ihry begv rrku'
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-        session:
-          events:
-            log:
-              LOG_QUERIES_SLOWER_THAN_MS: 5
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          port: 25
+          auth: true
+          starttls:
+            enable: true
+            required: true
 logging:
   level:
     root: info

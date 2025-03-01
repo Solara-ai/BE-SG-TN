@@ -1,24 +1,21 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "tasks")
+@Document(collection = "tasks")
 public class Tasks {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "epic_id", nullable = false)
-    private TasksManagement epic;
+    private String id;
 
-    @Column(length = 255)
+    private String epicId;
+
     private String description;
 }

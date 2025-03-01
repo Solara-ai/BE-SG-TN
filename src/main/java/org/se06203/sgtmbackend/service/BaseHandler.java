@@ -28,9 +28,7 @@ public class BaseHandler {
 
     protected final JwtService jwtService;
     protected final UsersRepository userRepository;
-    protected final OTPService otpService;
-    protected final PasswordEncoder passwordEncoder;
-    protected final UserRolesRepository userRolesRepository;
+    private final PasswordEncoder passwordEncoder;
 
     protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -51,7 +49,6 @@ public class BaseHandler {
                     .findByEmailAndRole(email, Constants.role.USER)
                     .orElseThrow(() -> new NotFoundException("user", email));
 
-            var userAuthorities = userRolesRepository.findAllByUserId(Constants.role.USER,user.getId());
 
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new NotFoundException();

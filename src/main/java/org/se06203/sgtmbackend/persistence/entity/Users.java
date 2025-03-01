@@ -1,8 +1,11 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
 
-import jakarta.persistence.*;
+
 import lombok.*;
+import org.se06203.sgtmbackend.ultis.Constants;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -11,40 +14,28 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "users")
+@Document(collection = "users")
 
-public class Users extends AbstractAuditingEntity<Long> {
+public class Users {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "user_name", length = 100, nullable = false)
+    private String id;
+
     private String userName;
 
-    @Column(name = "first_name",length = 100,nullable = false)
     private String firstName;
 
-    @Column(name = "last_name",length = 100,nullable = false)
     private String lastName;
 
-    @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(length = 10)
     private String phone;
 
-    @Column(length = 10)
     private String gender;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserRoles> roles;
-
-    @OneToMany(mappedBy = "admin")
-    private List<Organizations> organizations;
+    private String role;
 }
