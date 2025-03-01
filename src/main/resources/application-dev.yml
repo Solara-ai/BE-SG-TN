@@ -5,12 +5,8 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://xuka:030404@scheduledb.pg41q.mongodb.net/ScheduleDB
+      uri: mongodb+srv://xuka:030404@scheduledb.pg41q.mongodb.net/sgtm
       auto-index-creation: true
-
-
-
-
 
   mail:
     host: smtp.gmail.com

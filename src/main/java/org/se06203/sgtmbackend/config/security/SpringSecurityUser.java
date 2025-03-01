@@ -16,43 +16,41 @@ import java.util.*;
 @Getter
 @Setter
 public class SpringSecurityUser implements UserDetails, CredentialsContainer {
-    private final String  id;
-    private final String userName;
+
+    private final String id;
+    private final String name;
     private String password;
-    private final Constants.role role;
-    private final Set<GrantedAuthority> authorities;
+    private final String gender;
     private final String phoneNumber;
     private final String email;
-    private final ZoneId zoneId;
-    private final String firstName;
-    private final String lastName;
+    private final Constants.role role;
+    private final ZoneId zoneId = ZoneId.systemDefault();
 
-    public SpringSecurityUser(String id, //NOSONAR
-                              String userName,
+    public SpringSecurityUser(String id,
+                              String name,
                               String password,
-                              Constants.role role,
-                              Collection<? extends GrantedAuthority> authorities,
+                              String gender,
                               String phoneNumber,
                               String email,
-                              ZoneId zoneId,
-                              String firstName,
-                              String lastName
+                              Constants.role role
     ) {
         this.id = id;
-        this.userName = userName;
+        this.name = name;
         this.password = password;
-        this.role = role;
-        this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+        this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.zoneId = zoneId;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
     @Override
     public String getUsername() {
-        return userName;
+        return name;
     }
 
     @Override
@@ -82,8 +80,6 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
 
     private SortedSet<GrantedAuthority> sortAuthorities(Collection<? extends GrantedAuthority> authorities) {
         Assert.notNull(authorities, "Cannot pass a null GrantedAuthority collection");
-        // Ensure array iteration order is predictable (as per
-        // UserDetails.getAuthorities() contract and SEC-717)
         SortedSet<GrantedAuthority> sortedAuthorities = new TreeSet<>((g1, g2) -> {
             if (g2.getAuthority() == null) {
                 return -1;
@@ -100,37 +96,27 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
         return sortedAuthorities;
     }
 
-    public static SpringSecurityUser fromUser(Users user, List<String> authorities, Constants.role role) {
-        List<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+    public static SpringSecurityUser fromUser(Users user) {
+
         return new SpringSecurityUser(user.getId(),
                 user.getUserName(),
                 user.getPassword(),
-                role,
-                grantedAuthorities,
+                user.getGender(),
                 user.getPhone(),
                 user.getEmail(),
-                ZoneId.systemDefault(),
-                user.getFirstName(),
-                user.getLastName()
+                Constants.role.USER
         );
     }
 
-    public static SpringSecurityUser fromUser(Users user, ZoneId zoneId, List<String> authorities, Constants.role role) {
-        List<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+    public static SpringSecurityUser fromUser(Users user, Constants.role role) {
+
         return new SpringSecurityUser(user.getId(),
                 user.getUserName(),
                 user.getPassword(),
-                role,
-                grantedAuthorities,
+                user.getGender(),
                 user.getPhone(),
                 user.getEmail(),
-                zoneId,
-                user.getFirstName(),
-                user.getLastName()
+                role
         );
     }
 }

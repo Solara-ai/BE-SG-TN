@@ -6,7 +6,6 @@ import org.se06203.sgtmbackend.config.security.SpringSecurityUser;
 import org.se06203.sgtmbackend.dto.request.EmailRequest;
 import org.se06203.sgtmbackend.dto.request.RegisterRequest;
 import org.se06203.sgtmbackend.dto.response.AuthenticateResponse;
-import org.se06203.sgtmbackend.persistence.entity.UserRoles;
 import org.se06203.sgtmbackend.persistence.entity.Users;
 import org.se06203.sgtmbackend.persistence.repository.UsersRepository;
 import org.se06203.sgtmbackend.ultis.Constants;
@@ -21,12 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticateService extends BaseHandler {
 
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public AuthenticateService(JwtService jwtService, UsersRepository userRepository, OTPService otpService, PasswordEncoder passwordEncoder, UsersRepository usersRepository) {
+    public AuthenticateService(JwtService jwtService, UsersRepository userRepository, OTPService otpService, UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         super(jwtService, userRepository, passwordEncoder);
         this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -50,23 +51,17 @@ public class AuthenticateService extends BaseHandler {
 
     @Transactional
     public AuthenticateResponse register(RegisterRequest rq) {
-//        if (!otpService.isValidOtpTransaction(rq.getTransId(), rq.getEmail())) {
-//            throw new OtpInvalidException("register");
-//        }
-
-        usersRepository.findByEmailAndRole(rq.getEmail(), Constants.role.USER)
+        usersRepository.findByEmailAndRole(rq.getEmail(), Constants.role.USER.name())
                 .ifPresentOrElse(
                         user -> {
                             throw new RegisterEmailExistException();
                         },
-                        () -> {
-                            var savedUser = usersRepository.save(Users.builder()
+                        () ->  usersRepository.save(Users.builder()
                                     .userName(rq.getUserName())
                                     .email(rq.getEmail())
                                     .password(passwordEncoder.encode(rq.getPassword()))
                                     .role(rq.getRoles())
-                                    .build());
-                        }
+                                    .build())
                 );
         //        todo BONUS_PRICE from admin
         return this.authenticate(EmailRequest.builder()

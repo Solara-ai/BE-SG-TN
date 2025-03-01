@@ -46,27 +46,20 @@ public class BaseHandler {
     public SpringSecurityUser getAuthenticatedUser(String email, TokenPayload payload, String password) {
         if (StringUtils.isNotBlank(password)) {
             var user = userRepository
-                    .findByEmailAndRole(email, Constants.role.USER)
+                    .findByEmailAndRole(email, Constants.role.USER.name())
                     .orElseThrow(() -> new NotFoundException("user", email));
 
 
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new NotFoundException();
             }
-            return SpringSecurityUser.fromUser(user, userAuthorities.stream()
-                    .map(authority -> authority.getRole().name())
-                    .toList(), Constants.role.USER);
+            return SpringSecurityUser.fromUser(user, Constants.role.USER);
         }
 
 
         return userRepository
-                .findByEmailAndRole(email, Constants.role.USER)
-                .map(user -> {
-                    var userAuthorities = userRolesRepository.findAllByUserId(Constants.role.USER,user.getId());
-                    return SpringSecurityUser.fromUser(user, userAuthorities.stream()
-                            .map(authority -> authority.getRole().name())
-                            .toList(), Constants.role.USER);
-                })
+                .findByEmailAndRole(email, Constants.role.USER.name())
+                .map(user -> SpringSecurityUser.fromUser(user, Constants.role.USER))
                 .orElseThrow(() -> new SocialUserNotFoundException(MapperUtils.toJsonString(payload)));
     }
 }
