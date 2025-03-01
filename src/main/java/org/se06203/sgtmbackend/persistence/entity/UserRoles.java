@@ -1,28 +1,25 @@
 package org.se06203.sgtmbackend.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.aspectj.apache.bcel.classfile.Constant;
-import org.se06203.sgtmbackend.ultis.Constants;
-import org.springframework.security.core.userdetails.User;
 
-@Entity
+import lombok.*;
+
+import org.se06203.sgtmbackend.ultis.Constants;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user_role")
+@Document(collection="user_role")
 
 public class UserRoles {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private String userId;
 
-    @Column(length = 10, nullable = false)
     private Constants.role role;
 }

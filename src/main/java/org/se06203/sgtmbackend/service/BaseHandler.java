@@ -2,13 +2,20 @@ package org.se06203.sgtmbackend.service;
 
 
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.se06203.sgtmbackend.config.exception.NotFoundException;
+import org.se06203.sgtmbackend.config.exception.SocialUserNotFoundException;
 import org.se06203.sgtmbackend.config.security.JwtService;
 import org.se06203.sgtmbackend.config.security.SecurityUtils;
-import org.se06203.sgtmbackend.persistence.repository.UserRolesRepository;
+import org.se06203.sgtmbackend.config.security.SpringSecurityUser;
+import org.se06203.sgtmbackend.dto.common.TokenPayload;
+import org.se06203.sgtmbackend.dto.response.AuthenticateResponse;
 import org.se06203.sgtmbackend.persistence.repository.UsersRepository;
+import org.se06203.sgtmbackend.ultis.Constants;
+import org.se06203.sgtmbackend.ultis.MapperUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +32,10 @@ public class BaseHandler {
     protected final PasswordEncoder passwordEncoder;
     protected final UserRolesRepository userRolesRepository;
 
-    protected AuthenticationResponse setAuthenticationContextAndGenerateToken(Authentication authentication) {
+    protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var token = jwtService.createToken(authentication);
-        return AuthenticationResponse.builder()
+        return AuthenticateResponse.builder()
                 .token(token.token())
                 .refreshToken(jwtService.createRefreshToken(authentication, SecurityUtils.getAuthenticatedUser().getRole()))
                 .build();
@@ -44,7 +51,7 @@ public class BaseHandler {
                     .findByEmailAndRole(email, Constants.role.USER)
                     .orElseThrow(() -> new NotFoundException("user", email));
 
-            var userAuthorities = accountRepository.findAllByUserId(user.getId());
+            var userAuthorities = userRolesRepository.findAllByUserId(Constants.role.USER,user.getId());
 
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new NotFoundException();
@@ -58,7 +65,7 @@ public class BaseHandler {
         return userRepository
                 .findByEmailAndRole(email, Constants.role.USER)
                 .map(user -> {
-                    var userAuthorities = accountRepository.findAllByUserId(user.getId());
+                    var userAuthorities = userRolesRepository.findAllByUserId(Constants.role.USER,user.getId());
                     return SpringSecurityUser.fromUser(user, userAuthorities.stream()
                             .map(authority -> authority.getRole().name())
                             .toList(), Constants.role.USER);
