@@ -1,11 +1,17 @@
+server:
+  port: 8081
+  servlet:
+    context-path: ${CONTEXT_PATH}
 spring:
+  application:
+    name: BE-SG-TN
   profiles:
-    active: dev
+    active: ${PROFILE}
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${USERNAME}
-    password: ${PASSWORD}
+    username: ${EMAIL}
+    password: ${PASSWORD_EMAIL}
     properties:
       mail:
         transport:
@@ -16,3 +22,26 @@ spring:
           starttls:
             enable: true
             required: true
+          connectionTimeout: 5000
+          sendTimeout: 3000
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        SQL_SLOW: info
+application:
+  security:
+    authentication:
+      jwt:
+        base64-secret: ${BASE64_SECRET_KEY}
+        token-validity-in-seconds: 3600
+        token-validity-in-seconds-for-remember-me: 2592000
+        refresh-token-validity-in-seconds: 2592000
+  cors:
+    allowed-origins: '*'
+    allowed-methods: '*'
+    allowed-headers: '*'

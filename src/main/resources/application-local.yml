@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: ${DATABASE_DB}
+      username: ${USERNAME_DB}
+      password: ${PASSWORD_DB}
+      database: ${DATABASE_DB}
+      port: ${PORT_DB_LOCAL}
+      host: ${HOST_DB}
+      auto-index-creation: true
+  logging:
+    level:
+      org:
+        springframework:
+          data:
+            mongodb: DEBUG

@@ -1,39 +1,35 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# =============================
+# 1️⃣ Loại bỏ thư mục build và dependency
+# =============================
+/target/
+*.jar
+*.war
+*.ear
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# =============================
+# 2️⃣ Loại bỏ tệp cấu hình hệ thống
+# =============================
+/.idea
+/.vscode      # Visual Studio Code
+/.classpath
+/.project
+/.settings
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### enviroment ###
-application-*.yml
-
+# =============================
+# 3️⃣Loại bỏ tệp môi trường (ENV) chứa thông tin nhạy cảm
+# =============================
 .env
+*.env
 
+# =============================
+# 4️⃣ Loại bỏ tệp log và debug
+# =============================
+*.log
+/logs/
+*.out
+
+# =============================
+# 5️⃣ Loại bỏ tệp liên quan đến hệ điều hành
+# =============================
+.DS_Store       # macOS
+Thumbs.db       # Windows
