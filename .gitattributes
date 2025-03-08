@@ -1,2 +1,58 @@
+# =============================
+# 1️⃣ Kiểm soát dòng kết thúc (EOL)
+# =============================
+
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Dùng LF (Linux/Mac) thay vì CRLF (Windows) cho tất cả mã nguồn
+*.java text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.properties text eol=lf
+
+# Windows batch scripts và shell scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# =============================
+# 2️⃣ Xử lý file binary
+# =============================
+
+# Các tệp binary không nên bị thay đổi dòng kết thúc
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.jar binary
+*.war binary
+*.ear binary
+*.exe binary
+*.dll binary
+
+# =============================
+# 3️⃣ Xử lý merge tự động cho một số loại file
+# =============================
+
+# Không tự động merge file khóa dependencies
+pom.xml merge=union
+package-lock.json merge=union
+yarn.lock merge=union
+
+# =============================
+# 4️⃣ Lọc file để tránh lỗi commit file lớn
+# =============================
+
+# Lọc các file logs để tránh bị add nhầm vào repo
+*.log filter=lfs diff=lfs merge=lfs -text
+
+# =============================
+# 5️⃣ Kiểm soát mã hóa file
+# =============================
+
+# Đảm bảo file Java sử dụng UTF-8
+*.java text eol=lf working-tree-encoding=UTF-8
+*.properties text eol=lf working-tree-encoding=UTF-8
+*.xml text eol=lf working-tree-encoding=UTF-8
+*.yml text eol=lf working-tree-encoding=UTF-8
