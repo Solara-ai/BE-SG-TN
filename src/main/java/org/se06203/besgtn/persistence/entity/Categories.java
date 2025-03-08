@@ -1,12 +1,16 @@
 package org.se06203.besgtn.persistence.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "categories")
 @Data
-public class Category {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Categories {
     @Id
     private String id;
     private String name;

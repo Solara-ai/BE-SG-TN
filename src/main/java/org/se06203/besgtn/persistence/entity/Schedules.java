@@ -1,13 +1,17 @@
 package org.se06203.besgtn.persistence.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Document(collection = "schedules")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Schedules {
     @Id
     private String id;
