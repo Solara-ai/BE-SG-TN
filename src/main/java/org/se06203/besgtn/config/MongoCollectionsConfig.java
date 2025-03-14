@@ -1,7 +1,6 @@
 package org.se06203.besgtn.config;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import org.bson.Document;
@@ -150,10 +149,14 @@ public class MongoCollectionsConfig {
             mongoTemplate.insert(new Document()
                     .append("_id", UUID.randomUUID().toString())
                     .append("userName", "john_doe")
+                    .append("firstName", "John")
+                    .append("lastName", "Doe")
                     .append("email", "john@example.com")
                     .append("password", "hashed_password")
                     .append("phone", "123456789")
                     .append("gender", "Male")
+                    .append("hobbies", "Reading, Coding")
+                    .append("Occupation", "Software Engineer")
                     .append("roles", List.of("USER", "ADMIN")), "users");
         }
     }

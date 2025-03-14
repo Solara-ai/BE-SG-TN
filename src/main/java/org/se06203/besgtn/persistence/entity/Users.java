@@ -17,9 +17,14 @@ public class Users {
     @Id
     private String id;
     private String userName;
+    private String firstName;
+    private String lastName;
+    private String birthday;
     private String email;
     private String password;
     private String phone;
     private String gender;
+    private String hobbies;
+    private String Occupation;
     private List<String> roles;
 }
