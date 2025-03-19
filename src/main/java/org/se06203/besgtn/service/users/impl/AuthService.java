@@ -1,4 +1,4 @@
-package org.se06203.besgtn.service.users.impl.auth;
+package org.se06203.besgtn.service.users.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
@@ -53,7 +53,7 @@ public class AuthService extends BaseHandler {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String register(RegisterRequest request){
+    public String register(RegisterRequest request) {
         var user = userRepository.findByEmailAndRoleIn(request.getEmail(), Constants.AuthorityEnum.USER.name());
         var existingUser = new Users();
         if (user.isPresent()) {
@@ -64,7 +64,7 @@ public class AuthService extends BaseHandler {
             }
 
             existingUser.getRoles().add(Constants.AuthorityEnum.USER.name());
-        }else {
+        } else {
             List<String> roles = new ArrayList<>();
             roles.add(Constants.AuthorityEnum.USER.name());
             existingUser.setRoles(roles);
@@ -72,6 +72,12 @@ public class AuthService extends BaseHandler {
 
         Users newUser = userRepository.save(existingUser.toBuilder()
                 .email(request.getEmail())
+                .phone(request.getPhone())
+                .hobbies(request.getHobbies())
+                .fullName(request.getFullName())
+                .birthday(request.getBirthday())
+                .Occupation(request.getOccupation())
+                .gender(request.getGender())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build());
 

@@ -9,11 +9,12 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCodeMsg implements BaseErrorCodeMsg {
 
-    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST,3001 , "User already exist"),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND,3002 , "User not found"),
-    PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND,3003 , "Password or email not match" ),;
+    ACCESS_DENIED(HttpStatus.FORBIDDEN.value(), HttpStatus.UNAUTHORIZED, "access denied"),
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST , "User already exist"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "User not found"),
+    PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Password or email not match" ),;
 
-    private final HttpStatus httpStatus;
-    private final int resultCode;
+    private final int httpStatus;
+    private final HttpStatus resultCode;
     private final String resultMsg;
 }

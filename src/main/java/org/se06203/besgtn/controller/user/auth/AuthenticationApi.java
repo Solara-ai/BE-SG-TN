@@ -21,11 +21,11 @@ public interface AuthenticationApi {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(tags = "users - Account", summary = "User Authentication/User's Login.")
+    @Operation(tags = "Authentication", summary = "User Authentication/User's Login.")
     ResponseEntity<BaseDataResponse<AuthenticateResponse>> login(@RequestBody @Valid EmailRequest request);
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(tags = "users - Account", summary = "User Registration.")
+    @Operation(tags = "Authentication", summary = "User Registration.")
     ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterRequest request);
 }
