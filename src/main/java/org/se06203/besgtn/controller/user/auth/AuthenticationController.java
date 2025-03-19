@@ -8,7 +8,7 @@ import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.request.EmailRequest;
 import org.se06203.besgtn.dto.request.RegisterRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
-import org.se06203.besgtn.service.users.impl.auth.AuthService;
+import org.se06203.besgtn.service.users.impl.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

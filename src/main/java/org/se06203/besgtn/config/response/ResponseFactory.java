@@ -16,8 +16,8 @@ public class ResponseFactory {
     public ResponseEntity<BaseResponse> success(HttpStatus httpStatus) {
         return ResponseEntity.status(httpStatus).body(
                 BaseResponse.builder()
-                        .httpStatus(httpStatus)
-                        .resultCode(httpStatus.value())
+                        .httpStatus(httpStatus.value())
+                        .resultCode(httpStatus)
                         .resultMsg("success")
                         .build());
     }
@@ -27,8 +27,8 @@ public class ResponseFactory {
 
         return ResponseEntity.status(httpStatus).body(
                 BaseResponse.builder()
-                        .httpStatus(httpStatus)
-                        .resultCode(httpStatus.value())
+                        .httpStatus(httpStatus.value())
+                        .resultCode(httpStatus)
                         .resultMsg("success")
                         .resourceId(resourceId)
                         .build());
@@ -46,8 +46,8 @@ public class ResponseFactory {
     public ResponseEntity<BaseResponse> fail(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseResponse.builder()
-                        .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .resultCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .resultCode(HttpStatus.INTERNAL_SERVER_ERROR)
                         .resultMsg(exception.getMessage())
                         .build());
     }
@@ -66,8 +66,8 @@ public class ResponseFactory {
     public <T> ResponseEntity<BaseDataResponse<T>> success(HttpStatus httpStatus, T data) {
         return ResponseEntity.status(httpStatus)
                 .body(BaseDataResponse.<T>build()
-                        .httpStatus(httpStatus)
-                        .resultCode(httpStatus.value())
+                        .httpStatus(httpStatus.value())
+                        .resultCode(httpStatus)
                         .resultMsg("success")
                         .data(data)
                         .build());
@@ -76,8 +76,8 @@ public class ResponseFactory {
     public <T> ResponseEntity<BaseDataResponse<T>> success(HttpStatus httpStatus, T data, String resourceId) {
         return ResponseEntity.status(httpStatus)
                 .body(BaseDataResponse.<T>build()
-                        .httpStatus(httpStatus)
-                        .resultCode(httpStatus.value())
+                        .httpStatus(httpStatus.value())
+                        .resultCode(httpStatus)
                         .resultMsg("success")
                         .resourceId(resourceId)
                         .data(data)
@@ -87,8 +87,8 @@ public class ResponseFactory {
     public <E extends BaseRuntimeException> ResponseEntity<BaseResponse> fail(ErrorCode errorCode) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(BaseResponse.builder()
-                        .httpStatus(HttpStatus.FORBIDDEN)
-                        .resultCode(errorCode.hashCode())
+                        .httpStatus(HttpStatus.FORBIDDEN.value())
+                        .resultCode(errorCode.getStatus())
                         .resultMsg(errorCode.getCode())
                         .build());
     }
@@ -96,8 +96,8 @@ public class ResponseFactory {
     public <E extends BaseRuntimeException> ResponseEntity<BaseResponse> fail(ErrorCode errorCode, String role, String feature) {
         return ResponseEntity.status(errorCode.getStatus())
                 .body(BaseResponse.builder()
-                        .httpStatus(errorCode.getStatus())
-                        .resultCode(errorCode.hashCode())
+                        .httpStatus(errorCode.getStatus().value())
+                        .resultCode(errorCode.getStatus())
                         .resultMsg(role + " does not have access to " + feature)
                         .build());
     }

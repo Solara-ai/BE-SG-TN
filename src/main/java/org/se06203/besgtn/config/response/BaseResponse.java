@@ -16,8 +16,8 @@ import java.time.format.DateTimeFormatter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseResponse {
 
-    private HttpStatus httpStatus;
-    private Integer resultCode;
+    private Integer httpStatus;
+    private HttpStatus resultCode;
     private String resultMsg;
     private String resourceId;
     @Builder.Default
@@ -25,8 +25,8 @@ public class BaseResponse {
             .withZone(ZoneOffset.UTC)
             .format(Instant.now());
 
-    public BaseResponse(HttpStatus httpStatus,
-                        Integer resultCode,
+    public BaseResponse(Integer httpStatus,
+                        HttpStatus resultCode,
                         String resultMsg,
                         String resourceId) {
         this.httpStatus = httpStatus;

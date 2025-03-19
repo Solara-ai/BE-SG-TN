@@ -1,12 +1,12 @@
 package org.se06203.besgtn.persistence.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import java.util.List;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
 
 @Document(collection = "users")
 @Data
@@ -17,8 +17,7 @@ public class Users {
     @Id
     private String id;
     private String userName;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String birthday;
     private String email;
     private String password;

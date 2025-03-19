@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class BaseRuntimeException extends RuntimeException {
 
-    private final HttpStatus httpStatus;
-    private final Integer resultCode;
+    private final Integer httpStatus;
+    private final HttpStatus resultCode;
     private final String resultMsg;
 
     public BaseRuntimeException(final BaseErrorCodeMsg baseErrorCodeMsg) {
