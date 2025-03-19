@@ -8,6 +8,14 @@ public class Constants {
         USER,
         ADMIN
     }
+
+    public enum RepeatType {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY,
+        NONE
+    }
     public static final String PHONE_REGEX = "^[0-9]\\d{9,14}$";
     public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     public static final int DURATION_PER_SLOT = 30;

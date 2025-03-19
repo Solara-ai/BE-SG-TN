@@ -9,7 +9,6 @@ import org.se06203.besgtn.utils.validation.ValidEmail;
 import org.se06203.besgtn.utils.validation.ValidPasscode;
 import org.se06203.besgtn.utils.validation.ValidPhoneNumber;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,11 +16,7 @@ import org.se06203.besgtn.utils.validation.ValidPhoneNumber;
 public class RegisterRequest {
 
     @NotNull
-    private String userName;
-
-    private String firstName;
-
-    private String lastName;
+    private String fullName;
 
     @NotNull
     @ValidEmail
@@ -35,7 +30,15 @@ public class RegisterRequest {
     @ValidPhoneNumber
     private String phone;
 
+    @NotNull
     private String gender;
 
-    private String roles;
+    @NotNull
+    private String hobbies;
+
+    @NotNull
+    private String Occupation;
+
+    @NotNull
+    private String birthday;
 }

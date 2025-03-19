@@ -14,8 +14,8 @@ public class BaseDataResponse<D> extends BaseResponse {
     private D data;
 
     @Builder(builderMethodName = "build")
-    public BaseDataResponse(final HttpStatus httpStatus,
-                            final Integer resultCode,
+    public BaseDataResponse(final Integer httpStatus,
+                            final HttpStatus resultCode,
                             final String resultMsg,
                             final String resourceId,
                             final D data) {
