@@ -76,7 +76,7 @@ public class ResponseFactory {
     public <T> ResponseEntity<BaseDataResponse<T>> success(HttpStatus httpStatus, T data, String resourceId) {
         return ResponseEntity.status(httpStatus)
                 .body(BaseDataResponse.<T>build()
-                        .httpStatus(httpStatus.value())
+                        .httpStatus(HttpStatus.OK.value())
                         .resultCode(httpStatus)
                         .resultMsg("success")
                         .resourceId(resourceId)

@@ -7,7 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -16,17 +20,28 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@TypeAlias("schedules")
 public class Schedules {
     @Id
     private String id;
     private String userId;
     private String name;
     private String description;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private LocalDate date;
+
+    @Field(targetType = FieldType.STRING)
+    private String startTime; // Lưu HH:mm:ss dưới dạng String
+
+    @Field(targetType = FieldType.STRING)
+    private String endTime; // Lưu HH:mm:ss dưới dạng String
+
+    @Field(targetType = FieldType.STRING)
+    private String date; // Lưu yyyy-MM-dd dưới dạng String
+
     @Enumerated(EnumType.STRING)
+    @Field(targetType = FieldType.STRING)
     private Constants.RepeatType repeat;
+
+    @Field(targetType = FieldType.STRING)
     private String repeatEndDate;
     private boolean remindMe;
     private String categoryId;

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -13,12 +14,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@TypeAlias("plans")
 public class Plans {
     @Id
     private String id;
     private String epicId;
-    private LocalDate date;
-    private int quantityTask;
+    private String date;
+    private Integer quantityTask;
     private List<String> taskIds;
 }
 

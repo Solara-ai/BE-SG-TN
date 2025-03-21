@@ -6,7 +6,8 @@ import java.util.Locale;
 public class Constants {
     public enum AuthorityEnum {
         USER,
-        ADMIN
+        ADMIN,
+        BOT
     }
 
     public enum RepeatType {

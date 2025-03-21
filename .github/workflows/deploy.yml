@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Stopping the existing application..."
-            sudo systemctl stop myapp || true  # Ignore error if service does not exist
+            sudo systemctl stop besgtn.service || true
 
             echo "Removing old JAR file..."
             rm -f /home/${{ secrets.SERVER_USER }}/BE-SG-TN-0.0.1-SNAPSHOT.jar
@@ -71,7 +71,16 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "Reloading systemd..."
+            sudo systemctl daemon-reload
+  
+            echo "Stopping old application instance..."
+            sudo systemctl stop besgtn.service || true
+  
             echo "Starting the application..."
-            nohup java -jar /home/${{ secrets.SERVER_USER }}/BE-SG-TN-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
-
+            sudo systemctl start besgtn.service
+  
+            echo "Checking status..."
+            sudo systemctl status besgtn.service --no-pager
+  
             echo "Deployment completed successfully!"
