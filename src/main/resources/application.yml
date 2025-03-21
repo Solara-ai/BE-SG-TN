@@ -34,6 +34,12 @@ spring:
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
 logging:
   level:
     root: info
