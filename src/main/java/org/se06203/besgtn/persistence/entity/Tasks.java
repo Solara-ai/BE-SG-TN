@@ -23,5 +23,6 @@ public class Tasks {
     private String id = new ObjectId().toString();
     private String epicId;
     private String description;
+    private String status;
 }
 

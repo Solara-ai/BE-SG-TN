@@ -16,7 +16,8 @@
 /.settings
 
 # =============================
-# 3️⃣Loại bỏ tệp môi trường (ENV) chứa thông tin nhạy cảm
+# 3️⃣Loại bỏ tệp môi trường (ENV) chứa thông tin nhạ
+y cảm
 # =============================
 .env
 *.env
