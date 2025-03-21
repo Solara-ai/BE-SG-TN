@@ -31,7 +31,6 @@ public class JwtService {
     private final ApplicationConfigurationProperties applicationConfig;
 
     private static final String CLAIM_AUTHORITY = "auth";
-    private static final String CLAIM_USER_ID = "user_id";
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_PHONE = "phone";
     private static final String CLAIM_EMAIL = "email";
@@ -85,12 +84,17 @@ public class JwtService {
         return false;
     }
 
-    public String getLoginFromToken(String token) {
-        return this.defaultJwtParserBuilder()
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+    public String getUserIdFromToken(String token) {
+        try {
+            return this.defaultJwtParserBuilder()
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (Exception e) {
+            System.err.println("Invalid token: " + e.getMessage());
+            return null;
+        }
     }
 
     public TokenInfo createToken(Authentication authentication) {
@@ -117,12 +121,11 @@ public class JwtService {
                         : jwtConfig.getTokenValidityInSeconds()) * 1000);
 
         return new TokenInfo(this.defaultJwtBuilder()
-                .claim(CLAIM_AUTHORITY, authentication.getAuthorities())
+                .claim(CLAIM_AUTHORITY, authenticateUser.getRole())
                 .claim(CLAIM_NAME, authenticateUser.getName())
                 .claim(CLAIM_EMAIL, authenticateUser.getEmail())
                 .claim(CLAIM_PHONE, authenticateUser.getPhoneNumber())
-                .claim(CLAIM_USER_ID, authenticateUser.getId())
-                .subject(authentication.getName())
+                .subject(authenticateUser.getId())
                 .expiration(validity)
                 .compact(), validity.getTime());
     }
@@ -139,6 +142,11 @@ public class JwtService {
 
     public String getRoleFromToken(String bearerToken) {
         return this.extractAuthority(bearerToken).name();
+    }
+
+    public Constants.AuthorityEnum getAuthFromToken(String bearToken){
+        var userType = extractClaim(bearToken, claims -> claims.get(CLAIM_AUTHORITY, String.class));
+        return Constants.AuthorityEnum.valueOf(userType);
     }
 
     public record TokenInfo(String token, Long validity) {

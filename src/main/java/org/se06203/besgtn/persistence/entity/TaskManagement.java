@@ -5,12 +5,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "task_management")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@TypeAlias("task_management")
 public class TaskManagement {
     @Id
     private String id;

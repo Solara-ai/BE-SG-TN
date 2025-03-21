@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 @Data
 @Builder
@@ -14,7 +13,15 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ChildSchedule {
     private String title;
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
+
+    private String weekday;
+
+    @Field(targetType = FieldType.STRING)
+    private String date; // yyyy-MM-dd
+
+    @Field(targetType = FieldType.STRING)
+    private String startTime; // HH:mm:ss
+
+    @Field(targetType = FieldType.STRING)
+    private String endTime; // HH:mm:ss
 }

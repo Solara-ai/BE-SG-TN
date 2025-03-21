@@ -40,6 +40,8 @@ logging:
     org:
       hibernate:
         SQL_SLOW: info
+      springframework:
+        security: ERROR
 application:
   security:
     authentication:

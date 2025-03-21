@@ -60,9 +60,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         bearerToken = bearerToken.substring(7);
         if (StringUtils.isNotEmpty(bearerToken) && this.jwtService.isTokenValid(bearerToken)) {
-            var userId = jwtService.getLoginFromToken(bearerToken);
-            var role = jwtService.getRoleFromToken(bearerToken);
-            userRepository.findByIdAndRoles(userId, role)
+            var userId = jwtService.getUserIdFromToken(bearerToken);
+            var role = jwtService.getAuthFromToken(bearerToken);
+            userRepository.findByIdAndRole(userId, role)
                     .ifPresent(user -> {
                         var sUser = SpringSecurityUser.fromUser(user);
                         var authentication = new UsernamePasswordAuthenticationToken(

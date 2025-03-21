@@ -39,14 +39,17 @@ public class BaseHandler {
                 .build();
     }
 
-    public SpringSecurityUser getAuthenticatedUser(String email, String password) {
-        return getAuthenticatedUser(email, null, password);
+    public SpringSecurityUser getAuthenticatedUser(String email, String password, Constants.AuthorityEnum authority) {
+        return getAuthenticatedUser(email, null, password, authority);
     }
 
-    public SpringSecurityUser getAuthenticatedUser(String email, TokenPayload payload, String password) {
+    public SpringSecurityUser getAuthenticatedUser(String email,
+                                                   TokenPayload payload,
+                                                   String password,
+                                                   Constants.AuthorityEnum authority) {
         if (StringUtils.isNotBlank(password)) {
             var user = userRepository
-                    .findByEmailAndRoleIn(email, Constants.AuthorityEnum.USER.name())
+                    .findByEmailAndRoleIn(email, authority.name())
                     .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
 
 

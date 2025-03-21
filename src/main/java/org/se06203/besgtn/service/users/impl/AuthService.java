@@ -37,7 +37,9 @@ public class AuthService extends BaseHandler {
     @Transactional
     public AuthenticateResponse authenticate(EmailRequest request) {
 
-        SpringSecurityUser springSecurityUser = getAuthenticatedUser(request.getEmail(), request.getPassword());
+        SpringSecurityUser springSecurityUser = getAuthenticatedUser(request.getEmail(),
+                request.getPassword(),
+                Constants.AuthorityEnum.USER);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 springSecurityUser,
