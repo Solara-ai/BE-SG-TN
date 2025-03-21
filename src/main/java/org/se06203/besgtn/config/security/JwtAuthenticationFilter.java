@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        String bearerToken = request.getHeader("Authorization");
+        var bearerToken = request.getHeader("Authorization");
         MDC.put(REQUEST_ID, UUID.randomUUID().toString());
         MDC.put(ENDPOINT, request.getRequestURI());
         MDC.put(METHOD, request.getMethod());

@@ -18,7 +18,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
     private final String id;
     private final String name;
     private String password;
-    private final String gender;
+    private final Constants.Gender gender;
     private final String phoneNumber;
     private final String email;
     private final String role;
@@ -27,7 +27,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
     public SpringSecurityUser(String id,
                               String name,
                               String password,
-                              String gender,
+                              Constants.Gender gender,
                               String phoneNumber,
                               String email,
                               String role

@@ -2,13 +2,12 @@ package org.se06203.besgtn.service.users.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
-import org.se06203.besgtn.config.exception.NotFoundException;
 import org.se06203.besgtn.config.security.JwtService;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.request.EmailRequest;
 import org.se06203.besgtn.dto.request.RegisterRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
-import org.se06203.besgtn.exception.ErrorCodeMsg;
+import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.persistence.entity.Users;
 import org.se06203.besgtn.persistence.repository.UserRepository;
 import org.se06203.besgtn.service.BaseHandler;
@@ -50,7 +49,7 @@ public class AuthService extends BaseHandler {
         try {
             return super.setAuthenticationContextAndGenerateToken(authenticationToken);
         } catch (BadCredentialsException ex) {
-            throw new NotFoundException("Cannot found account");
+            throw new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND);
         }
     }
 

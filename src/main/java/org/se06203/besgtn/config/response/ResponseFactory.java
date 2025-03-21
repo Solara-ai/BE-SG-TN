@@ -2,7 +2,6 @@ package org.se06203.besgtn.config.response;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.se06203.besgtn.config.ErrorCode;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,21 +83,4 @@ public class ResponseFactory {
                         .build());
     }
 
-    public <E extends BaseRuntimeException> ResponseEntity<BaseResponse> fail(ErrorCode errorCode) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(BaseResponse.builder()
-                        .httpStatus(HttpStatus.FORBIDDEN.value())
-                        .resultCode(errorCode.getStatus())
-                        .resultMsg(errorCode.getCode())
-                        .build());
-    }
-
-    public <E extends BaseRuntimeException> ResponseEntity<BaseResponse> fail(ErrorCode errorCode, String role, String feature) {
-        return ResponseEntity.status(errorCode.getStatus())
-                .body(BaseResponse.builder()
-                        .httpStatus(errorCode.getStatus().value())
-                        .resultCode(errorCode.getStatus())
-                        .resultMsg(role + " does not have access to " + feature)
-                        .build());
-    }
 }

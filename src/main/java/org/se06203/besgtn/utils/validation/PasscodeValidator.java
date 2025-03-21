@@ -12,8 +12,10 @@ public class PasscodeValidator implements ConstraintValidator<ValidPasscode, Str
 
     @Override
     public boolean isValid(String passcode, ConstraintValidatorContext constraintValidatorContext) {
-        if (StringUtils.isEmpty(passcode))
+        if (StringUtils.isEmpty(passcode) || passcode.length() < 6)
             return false;
-        return passcode.matches("\\d{6}");
+
+        // Regex kiểm tra mật khẩu: ít nhất 6 ký tự, có chữ hoa, chữ thường, số, ký tự đặc biệt
+        return passcode.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$");
     }
 }

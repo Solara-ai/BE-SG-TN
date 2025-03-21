@@ -7,9 +7,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.se06203.besgtn.config.ErrorCode;
 import org.se06203.besgtn.config.ApplicationConfigurationProperties;
-import org.se06203.besgtn.config.exception.ServerException;
+import org.se06203.besgtn.config.exception.BaseRuntimeException;
+import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -65,7 +65,7 @@ public class JwtService {
         var authorities = new ObjectMapper().convertValue(extractClaim(token, claims -> claims.get(CLAIM_AUTHORITY, Object.class)), refType);
         var authority = authorities.stream()
                 .findFirst()
-                .orElseThrow(() -> new ServerException(ErrorCode.UNAUTHORIZED));
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.UNAUTHORIZED));
         return Constants.AuthorityEnum.valueOf(authority.get("authority"));
     }
 

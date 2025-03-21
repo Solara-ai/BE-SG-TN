@@ -12,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Document(collection = "schedules")

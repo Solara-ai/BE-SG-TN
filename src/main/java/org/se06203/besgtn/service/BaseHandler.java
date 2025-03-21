@@ -1,25 +1,20 @@
 package org.se06203.besgtn.service;
 
-
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
-import org.se06203.besgtn.config.exception.NotFoundException;
-import org.se06203.besgtn.config.exception.SocialUserNotFoundException;
 import org.se06203.besgtn.config.security.JwtService;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.common.TokenPayload;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
-import org.se06203.besgtn.exception.ErrorCodeMsg;
+import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.persistence.repository.UserRepository;
 import org.se06203.besgtn.utils.Constants;
-import org.se06203.besgtn.utils.MapperUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +58,6 @@ public class BaseHandler {
         return userRepository
                 .findByEmailAndRoleIn(email, Constants.AuthorityEnum.USER.name())
                 .map(user -> SpringSecurityUser.fromUser(user, Constants.AuthorityEnum.USER))
-                .orElseThrow(() -> new SocialUserNotFoundException(MapperUtils.toJsonString(payload)));
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
     }
 }

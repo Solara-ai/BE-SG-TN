@@ -1,11 +1,14 @@
 package org.se06203.besgtn.persistence.entity;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 import java.util.List;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.se06203.besgtn.utils.Constants;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,7 +31,9 @@ public class Users {
     private String email;
     private String password;
     private String phone;
-    private String gender;
+    @Field(targetType = FieldType.STRING)
+    @Enumerated(EnumType.STRING)
+    private Constants.Gender gender;
     private String hobbies;
     private String Occupation;
     private List<String> roles;

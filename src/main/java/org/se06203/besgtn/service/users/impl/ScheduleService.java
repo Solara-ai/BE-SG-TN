@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.dto.request.ScheduleDto.InsertScheduleReq;
-import org.se06203.besgtn.exception.ErrorCodeMsg;
+import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.persistence.entity.ChildSchedule;
 import org.se06203.besgtn.persistence.repository.ScheduleRepository;
 import org.se06203.besgtn.utils.mapper.ScheduleMapper;

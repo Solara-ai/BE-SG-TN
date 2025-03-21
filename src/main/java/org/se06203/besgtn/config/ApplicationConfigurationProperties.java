@@ -4,20 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.web.cors.CorsConfiguration;
 
 @ConfigurationProperties("application")
 @Getter
 @Setter
 public class ApplicationConfigurationProperties {
-    private static final String API_VERSION = "v1.0";
-    private static final String API_VERSION_HEADER_KEY = "X-API-Version";
-    public static final String API_VERSION_HEADER = API_VERSION_HEADER_KEY + "=" + API_VERSION;
 
     private final Security security = new Security();
-    private final CorsConfiguration cors = new CorsConfiguration();
-    private final ThirdParty thirdParty = new ThirdParty();
-    private final OTP otp = new OTP();
 
     @Getter
     @Setter
@@ -49,48 +42,5 @@ public class ApplicationConfigurationProperties {
                 }
             }
         }
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class ThirdParty {
-        private final Google google = new Google();
-        private final Apple apple = new Apple();
-        private final WhatsApp whatsApp = new WhatsApp();
-
-        @Getter
-        @Setter
-        public static class Google {
-            private String clientId;
-            private String clientSecret;
-            private String bucketName;
-            private String projectId;
-            private String publicBucketName;
-            private String apiKey;
-            private String credentialFilePath;
-        }
-
-        @Getter
-        @Setter
-        public static class Apple {
-            private String appAudience;
-        }
-
-        @Getter
-        @Setter
-        public static class WhatsApp {
-            private String accessToken;
-            private String phoneNumberId;
-        }
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class OTP {
-        private Integer timeStepInSec = 30;
-        private Integer resultValidityInSec = 300;
-        private Integer length = 6;
     }
 }

@@ -1,7 +1,14 @@
 package org.se06203.besgtn.utils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Constants {
     public enum AuthorityEnum {
@@ -16,6 +23,33 @@ public class Constants {
         MONTHLY,
         YEARLY,
         NONE
+    }
+
+    public enum Gender {
+        MALE,
+        FEMALE,
+    }
+
+    @Getter
+    public enum InternalHttpHeader {
+        CORRELATION_ID("x-correlation-id"),
+        USER_ID("x-user-id"),
+        AUTHORIZATION("Authorization"),
+        LANGUAGE("Accept-Language"),
+        START_TIME("x-start-time"),
+        API_KEY("api-key");
+
+        private final String value;
+
+        InternalHttpHeader(String value) {
+            this.value = value;
+        }
+
+        public static Set<String> getInternalHeaders() {
+            return EnumSet.allOf(InternalHttpHeader.class).stream()
+                    .map(InternalHttpHeader::getValue)
+                    .collect(Collectors.toSet());
+        }
     }
     public static final String PHONE_REGEX = "^[0-9]\\d{9,14}$";
     public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
