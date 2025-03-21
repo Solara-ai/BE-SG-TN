@@ -20,4 +20,7 @@ public interface TaskManagementRepository extends MongoRepository<TaskManagement
 
     @Query("{ 'id': ?0 , 'deletedAt': null }")
     Optional<TaskManagement> findActiveEpicById(String id);
+
+    @Query("{ 'type': ?0 }")
+    List<TaskManagement> findAllByType(String type);
 }
