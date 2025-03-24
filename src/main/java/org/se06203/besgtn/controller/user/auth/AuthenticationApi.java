@@ -1,6 +1,8 @@
 package org.se06203.besgtn.controller.user.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,5 +29,11 @@ public interface AuthenticationApi {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(tags = "Authentication", summary = "User Registration.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lấy thông tin người dùng thành công"),
+            @ApiResponse(responseCode = "400", description = "Yêu cầu không hợp lệ"),
+            @ApiResponse(responseCode = "404", description = "Không tìm thấy người dùng"),
+            @ApiResponse(responseCode = "500", description = "Lỗi máy chủ nội bộ")
+    })
     ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterRequest request);
 }

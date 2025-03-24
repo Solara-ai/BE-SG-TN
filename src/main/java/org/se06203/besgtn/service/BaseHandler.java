@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.JwtService;
+import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.common.TokenPayload;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
@@ -25,12 +26,14 @@ public class BaseHandler {
     protected final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication) {
+    protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication, String userId) {
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var token = jwtService.createToken(authentication);
         return AuthenticateResponse.builder()
                 .token(token.token())
                 .refreshToken(jwtService.createRefreshToken(authentication))
+                .userId(userId)
                 .build();
     }
 

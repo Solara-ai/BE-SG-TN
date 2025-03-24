@@ -34,6 +34,7 @@ public class JwtService {
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_PHONE = "phone";
     private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_USER_ID = "userId";
 
     @PostConstruct
     public void init() {
@@ -80,8 +81,8 @@ public class JwtService {
         } catch (JwtException | IllegalArgumentException e) {
             log.info("Invalid JWT token.");
             log.trace("Invalid JWT token trace.", e);
+            throw new BaseRuntimeException(ErrorCodeMsg.UNAUTHORIZED);
         }
-        return false;
     }
 
     public String getUserIdFromToken(String token) {
@@ -93,7 +94,7 @@ public class JwtService {
                     .getSubject();
         } catch (Exception e) {
             System.err.println("Invalid token: " + e.getMessage());
-            return null;
+            throw new BaseRuntimeException(ErrorCodeMsg.UNAUTHORIZED);
         }
     }
 
@@ -125,6 +126,7 @@ public class JwtService {
                 .claim(CLAIM_NAME, authenticateUser.getName())
                 .claim(CLAIM_EMAIL, authenticateUser.getEmail())
                 .claim(CLAIM_PHONE, authenticateUser.getPhoneNumber())
+                .claim(CLAIM_USER_ID, authenticateUser.getId())
                 .subject(authenticateUser.getId())
                 .expiration(validity)
                 .compact(), validity.getTime());

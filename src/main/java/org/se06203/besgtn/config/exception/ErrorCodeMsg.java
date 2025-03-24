@@ -23,7 +23,9 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST , "User already exist"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "User not found"),
     REPEAT_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Repeat not found" ),
-    ;
+
+    // schedules
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

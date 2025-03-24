@@ -2,6 +2,7 @@ package org.se06203.besgtn.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
@@ -12,22 +13,33 @@ import java.util.stream.Collectors;
 
 public class Constants {
     public enum AuthorityEnum {
-        USER,
-        ADMIN,
-        BOT
+        USER, ADMIN, BOT
     }
 
     public enum RepeatType {
+        @Schema(description = "Repeat daily", example = "DAILY")
         DAILY,
+        @Schema(description = "Repeat weekly", example = "WEEKLY")
         WEEKLY,
+        @Schema(description = "Repeat monthly", example = "MONTHLY")
         MONTHLY,
+        @Schema(description = "Repeat yearly", example = "YEARLY")
         YEARLY,
+        @Schema(description = "No repeat", example = "NONE")
         NONE
     }
 
     public enum Gender {
-        MALE,
-        FEMALE,
+        MALE, FEMALE,
+    }
+
+    public enum RepeatUpdateType {
+        @Schema(description = "Update all events in schedule", example = "ALL")
+        ALL,
+        @Schema(description = "Update only this event", example = "THIS")
+        THIS,
+        @Schema(description = "Update from this events to the end of event in schedule", example = "CONTINUE")
+        CONTINUE
     }
 
     @Getter

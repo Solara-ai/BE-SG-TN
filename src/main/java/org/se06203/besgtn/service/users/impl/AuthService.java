@@ -3,6 +3,7 @@ package org.se06203.besgtn.service.users.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.JwtService;
+import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.request.EmailRequest;
 import org.se06203.besgtn.dto.request.RegisterRequest;
@@ -47,7 +48,7 @@ public class AuthService extends BaseHandler {
         );
 
         try {
-            return super.setAuthenticationContextAndGenerateToken(authenticationToken);
+            return super.setAuthenticationContextAndGenerateToken(authenticationToken, springSecurityUser.getId());
         } catch (BadCredentialsException ex) {
             throw new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND);
         }

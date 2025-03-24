@@ -3,8 +3,10 @@ package org.se06203.besgtn.persistence.entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -16,12 +18,13 @@ import java.util.List;
 
 @Document(collection = "schedules")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeAlias("schedules")
 public class Schedules {
     @Id
-    private String id;
+    private String id = new ObjectId().toString();
     private String userId;
     private String name;
     private String description;
@@ -45,4 +48,5 @@ public class Schedules {
     private String categoryId;
     private String parentScheduleId;
     private List<ChildSchedule> childSchedules;
+    private List<ScheduleException> exceptions;
 }
