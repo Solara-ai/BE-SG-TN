@@ -1,6 +1,7 @@
 package org.se06203.besgtn.controller.user.schedules;
 
-import org.se06203.besgtn.dto.request.ScheduleDto.UpdateScheduleReq;
+import org.se06203.besgtn.config.response.BaseDataResponse;
+import org.se06203.besgtn.dto.request.ScheduleDto.*;
 import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.se06203.besgtn.dto.request.ScheduleDto.InsertScheduleReq;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users/schedules")
@@ -25,4 +27,25 @@ public interface ScheduleApi {
     @ResponseStatus(HttpStatus.OK)
     @Operation(tags = "Schedules", summary = "Update Schedule.")
     ResponseEntity<BaseResponse> updateSchedule(@PathVariable String ScheduleId, UpdateScheduleReq req);
+
+    @GetMapping("/date")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(tags = "Schedules", summary = "Get List Schedules By Date.")
+    ResponseEntity<BaseDataResponse<List<GetListScheduleRes>>> getListSchedulesByDate(
+            @RequestParam(value = "date") String date);
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(tags = "Schedules", summary = "Get List Schedules.")
+    ResponseEntity<BaseDataResponse<List<GetDateTime>>> getListSchedules();
+
+    @GetMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(tags = "Schedules", summary = "Get Schedule Detail By Event Id.")
+    ResponseEntity<BaseDataResponse<GetDetailSchedule>> getScheduleDetailByEventId(@PathVariable String eventId);
+
+    @DeleteMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(tags = "Schedules", summary = "Delete Schedule By Event Id.")
+    ResponseEntity<BaseResponse> deleteScheduleByEventId(@PathVariable String eventId);
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -23,7 +24,8 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 @TypeAlias("users")
 public class Users {
     @Id
-    private String id;
+    @Builder.Default
+    private String id = new ObjectId().toString();
     private String userName;
     private String fullName;
     @Field(targetType = FieldType.STRING)

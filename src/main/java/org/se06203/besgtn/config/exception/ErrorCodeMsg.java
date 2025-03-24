@@ -25,7 +25,8 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     REPEAT_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Repeat not found" ),
 
     // schedules
-    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),;
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),
+    CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND , "Category not found" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

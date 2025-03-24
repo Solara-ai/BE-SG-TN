@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.SecurityUtils;
-import org.se06203.besgtn.dto.request.ScheduleDto.InsertScheduleReq;
+import org.se06203.besgtn.dto.request.ScheduleDto.*;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
-import org.se06203.besgtn.dto.request.ScheduleDto.UpdateScheduleReq;
+import org.se06203.besgtn.persistence.entity.Categories;
 import org.se06203.besgtn.persistence.entity.ChildSchedule;
+import org.se06203.besgtn.persistence.entity.ScheduleException;
 import org.se06203.besgtn.persistence.entity.Schedules;
+import org.se06203.besgtn.persistence.repository.CategoryRepository;
 import org.se06203.besgtn.persistence.repository.ScheduleRepository;
+import org.se06203.besgtn.utils.mapper.CategoriesMapper;
+import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
 import org.se06203.besgtn.utils.mapper.ScheduleMapper;
 import org.se06203.besgtn.utils.method.ScheduleUtils;
 import org.springframework.stereotype.Service;
@@ -18,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
 
@@ -29,6 +33,9 @@ import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
+    private final ChildScheduleMapper childScheduleMapper;
+    private final CategoryRepository categoryRepository;
+    private final CategoriesMapper categoriesMapper;
 
     @Transactional
     public void createSchedule(InsertScheduleReq req) {
@@ -152,7 +159,145 @@ public class ScheduleService {
                 .endTime(req.getEndTime())
                 .date(req.getDate())
                 .repeat(req.getRepeat())
+                .categoryId(req.getCategoryId())
                 .childSchedules(childSchedules)
                 .build());
+    }
+
+    public List<GetListScheduleRes> getListSchedulesByDate(String date) {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var categories = categoryRepository.findAll();
+        var schedules = scheduleRepository.findAllByUserIdAndDate(userId, date);
+
+        Map<String, List<String>> exceptionDates = schedules.stream()
+                .collect(Collectors.toMap(
+                        Schedules::getId,
+                        schedule -> schedule.getExceptions() == null ? Collections.emptyList()
+                                : schedule.getExceptions().stream()
+                                .map(ScheduleException::getExceptionDate)
+                                .toList()
+                ));
+
+        return schedules.parallelStream()
+                .flatMap(schedule -> {
+                    var exceptions = exceptionDates.getOrDefault(schedule.getId(), Collections.emptyList());
+                    var color = categories.stream()
+                            .filter(category -> category.getId().equals(schedule.getCategoryId()))
+                            .map(Categories::getColor)
+                            .findFirst()
+                            .orElse(null);
+
+                    return schedule.getChildSchedules().stream()
+                            .filter(child -> child.getDate().equals(date) && !exceptions.contains(child.getDate()))
+                            .map(child -> {
+                                var getListScheduleRes = childScheduleMapper.mapSchedulesToGetListScheduleRes(child);
+                                getListScheduleRes.setScheduleId(schedule.getId());
+                                getListScheduleRes.setDescription(schedule.getDescription());
+                                getListScheduleRes.setEventName(schedule.getName());
+                                getListScheduleRes.setCategoryColor(color);
+                                return getListScheduleRes;
+                            });
+                })
+                .distinct()
+                .sorted(Comparator.comparing(GetListScheduleRes::getStartTime))
+                .toList();
+    }
+
+    public List<GetDateTime> getListSchedules() {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var schedules = scheduleRepository.findAllByUserId(userId);
+        var categories = categoryRepository.findAll();
+
+        // Tạo map chứa danh sách exception theo scheduleId
+        Map<String, List<String>> exceptionDates = schedules.stream()
+                .collect(Collectors.toMap(
+                        Schedules::getId,
+                        schedule -> schedule.getExceptions() == null ? Collections.emptyList()
+                                : schedule.getExceptions().stream()
+                                .map(ScheduleException::getExceptionDate)
+                                .toList()
+                ));
+
+        return schedules.parallelStream()
+                .flatMap(schedule -> {
+                    var exceptions = exceptionDates.getOrDefault(schedule.getId(), Collections.emptyList());
+                    var categoryColor = categories.stream()
+                            .filter(category -> category.getId().equals(schedule.getCategoryId()))
+                            .map(Categories::getColor)
+                            .findFirst()
+                            .orElse(null);
+
+                    return schedule.getChildSchedules().stream()
+                            .filter(child -> !exceptions.contains(child.getDate()))
+                            .map(child -> {
+                                var getDateTime = childScheduleMapper.mapSchedulesToGetDateTime(child);
+                                getDateTime.setCategoryColor(categoryColor);
+                                return getDateTime;
+                            });
+                })
+                .distinct()
+                .sorted(Comparator.comparing(GetDateTime::getDate))
+                .toList();
+    }
+
+    public GetDetailSchedule getScheduleDetailByEventId(String eventId) {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var categories = categoryRepository.findAll();
+        var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
+
+        var childSchedules = schedule.getChildSchedules().stream()
+                .filter(child -> child.getId().equals(eventId))
+                .toList();
+
+        if (childSchedules.isEmpty()) {
+            throw new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND);
+        }
+
+        var childEvent = childSchedules.get(0);
+        var exceptionExists = schedule.getExceptions().stream()
+                .anyMatch(ex -> ex.getExceptionDate().equals(childEvent.getDate()));
+
+        if (exceptionExists) {
+            return null;
+        }
+
+        schedule.setChildSchedules(childSchedules);
+        var response = scheduleMapper.mapSchedulesToGetDetailSchedule(schedule);
+
+        var category = categories.stream()
+                .filter(cat -> cat.getId().equals(schedule.getCategoryId()))
+                .map(categoriesMapper::mapCategoriesToGetCategories)
+                .findFirst()
+                .orElse(null);
+
+        response.setCategories(category);
+        response.setEventId(eventId);
+        return response;
+    }
+
+    @Transactional
+    public void deleteScheduleByEventId(String eventId) {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
+
+        var childEvent = schedule.getChildSchedules().stream()
+                .filter(child -> child.getId().equals(eventId))
+                .findFirst()
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
+
+        if (schedule.getExceptions() == null) {
+            schedule.setExceptions(new ArrayList<>());
+        }
+
+        schedule.getExceptions().add(ScheduleException.builder()
+                .id(childEvent.getId())
+                .exceptionDate(childEvent.getDate())
+                .statTime(childEvent.getStartTime())
+                .endTime(childEvent.getEndTime())
+                .build());
+
+        scheduleRepository.save(schedule);
     }
 }

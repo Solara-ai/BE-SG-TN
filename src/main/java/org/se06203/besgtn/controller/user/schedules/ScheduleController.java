@@ -1,16 +1,17 @@
 package org.se06203.besgtn.controller.user.schedules;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
-import org.se06203.besgtn.dto.request.ScheduleDto.InsertScheduleReq;
-import org.se06203.besgtn.dto.request.ScheduleDto.UpdateScheduleReq;
+import org.se06203.besgtn.dto.request.ScheduleDto.*;
 import org.se06203.besgtn.service.users.impl.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,5 +31,26 @@ public class ScheduleController implements ScheduleApi{
     public ResponseEntity<BaseResponse> updateSchedule(String ScheduleId, UpdateScheduleReq req) {
         scheduleService.updateSchedule(ScheduleId, req);
         return responseFactory.success(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<List<GetListScheduleRes>>> getListSchedulesByDate(String date) {
+        return responseFactory.success(HttpStatus.OK, scheduleService.getListSchedulesByDate(date));
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<List<GetDateTime>>> getListSchedules() {
+        return responseFactory.success(HttpStatus.OK, scheduleService.getListSchedules());
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<GetDetailSchedule>> getScheduleDetailByEventId(String eventId) {
+        return responseFactory.success(HttpStatus.OK, scheduleService.getScheduleDetailByEventId(eventId));
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> deleteScheduleByEventId(String eventId) {
+        scheduleService.deleteScheduleByEventId(eventId);
+        return responseFactory.success(HttpStatus.NO_CONTENT);
     }
 }

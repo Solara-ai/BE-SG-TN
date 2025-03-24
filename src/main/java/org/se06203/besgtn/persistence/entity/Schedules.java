@@ -46,7 +46,6 @@ public class Schedules {
     private String repeatEndDate;
     private boolean remindMe;
     private String categoryId;
-    private String parentScheduleId;
     private List<ChildSchedule> childSchedules;
     private List<ScheduleException> exceptions;
 }
