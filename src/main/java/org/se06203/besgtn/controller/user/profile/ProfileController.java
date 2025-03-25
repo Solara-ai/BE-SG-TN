@@ -7,7 +7,7 @@ import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.request.ProfileRequest;
 import org.se06203.besgtn.dto.response.ProfileResponse;
-import org.se06203.besgtn.service.users.impl.ProfileService;
+import org.se06203.besgtn.service.users.impl.UsersProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class ProfileController implements ProfileApi{
 
-    private final ProfileService profileService;
+    private final UsersProfileService usersProfileService;
     private final ResponseFactory responseFactory;
 
     @Override
     public ResponseEntity<BaseDataResponse<ProfileResponse>> getProfile() {
-        return responseFactory.success(HttpStatus.OK, profileService.getProfile());
+        return responseFactory.success(HttpStatus.OK, usersProfileService.getProfile());
     }
 
     @Override
     public ResponseEntity<BaseResponse> updateProfile(ProfileRequest profileRequest) {
-        profileService.updateProfile(profileRequest);
+        usersProfileService.updateProfile(profileRequest);
         return responseFactory.success(HttpStatus.OK);
     }
 }

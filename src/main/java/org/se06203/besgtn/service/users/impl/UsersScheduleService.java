@@ -33,7 +33,7 @@ import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScheduleService {
+public class UsersScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
     private final ChildScheduleMapper childScheduleMapper;

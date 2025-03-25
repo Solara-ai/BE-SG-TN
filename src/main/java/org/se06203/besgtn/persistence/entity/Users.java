@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.utils.Constants;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document(collection = "users")
 @Data
@@ -25,7 +25,8 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 @AllArgsConstructor
 @TypeAlias("users")
 public class Users {
-    @Id
+
+    @MongoId(FieldType.STRING)
     @Builder.Default
     private String id = new ObjectId().toString();
     private String userName;
@@ -40,7 +41,9 @@ public class Users {
     private Constants.Gender gender;
     private String hobbies;
     private String occupation;
-    private List<String> roles;
+    @Field(targetType = FieldType.STRING)
+    @Enumerated(EnumType.STRING)
+    private List<Constants.AuthorityEnum> roles;
     @Field(targetType = FieldType.DATE_TIME)
     @Builder.Default
     private Instant createdAt = Instant.now();

@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ProfileService {
+public class UsersProfileService {
     private UserRepository userRepository;
     private ProfileMapper profileMapper;
     private PasswordEncoder passwordEncoder;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public ProfileService(UserRepository userRepository, ProfileMapper profileMapper, PasswordEncoder passwordEncoder) {
+    public UsersProfileService(UserRepository userRepository, ProfileMapper profileMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.profileMapper = profileMapper;
         this.passwordEncoder = passwordEncoder;
