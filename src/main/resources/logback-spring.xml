@@ -3,7 +3,7 @@
 
     <springProperty scope="context" name="service-name" source="spring.application.name"/>
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] [dzc-auth] [%X{x-correlation-id}] %cyan(%logger{36}) - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] [%X{x-correlation-id}] %cyan(%logger{36}) - %msg%n"/>
 
     <!-- Thư mục lưu log -->
     <property name="LOG_PATH" value="./logs"/>

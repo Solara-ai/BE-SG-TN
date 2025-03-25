@@ -21,7 +21,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
     private final Constants.Gender gender;
     private final String phoneNumber;
     private final String email;
-    private final String role;
+    private final Constants.AuthorityEnum role;
     private final ZoneId zoneId = ZoneId.systemDefault();
 
     public SpringSecurityUser(String id,
@@ -30,7 +30,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
                               Constants.Gender gender,
                               String phoneNumber,
                               String email,
-                              String role
+                              Constants.AuthorityEnum role
     ) {
         this.id = id;
         this.name = name;
@@ -43,7 +43,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
                 user.getGender(),
                 user.getPhone(),
                 user.getEmail(),
-                Constants.AuthorityEnum.USER.toString()
+                Constants.AuthorityEnum.USER
         );
     }
 
@@ -94,7 +94,7 @@ public class SpringSecurityUser implements UserDetails, CredentialsContainer {
                 user.getGender(),
                 user.getPhone(),
                 user.getEmail(),
-                authority.toString()
+                authority
         );
     }
 }

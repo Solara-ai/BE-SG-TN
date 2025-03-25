@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.Instant;
 
@@ -18,7 +18,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @TypeAlias("schedule_exceptions")
 public class ScheduleException {
-    @Id
+
+    @MongoId(FieldType.STRING)
     @Builder.Default
     private String id = new ObjectId().toString();
     @Field(targetType = FieldType.STRING)

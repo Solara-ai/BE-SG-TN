@@ -60,8 +60,8 @@ public class AuthService extends BaseHandler {
                     throw new BaseRuntimeException(ErrorCodeMsg.USER_ALREADY_EXIST);
                 });
 
-        List<String> roles = new ArrayList<>();
-        roles.add(Constants.AuthorityEnum.USER.name());
+        List<Constants.AuthorityEnum> roles = new ArrayList<>();
+        roles.add(Constants.AuthorityEnum.USER);
 
         return userRepository.save(Users.builder()
                 .email(request.getEmail())
@@ -80,11 +80,11 @@ public class AuthService extends BaseHandler {
     public String register(RegisterAdminRequest request) {
         var user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
-        if (user.getRoles().contains(Constants.AuthorityEnum.ADMIN.name())) {
+        if (user.getRoles().contains(Constants.AuthorityEnum.ADMIN)) {
             throw new BaseRuntimeException(ErrorCodeMsg.USER_ALREADY_EXIST);
         }
 
-        user.getRoles().add(Constants.AuthorityEnum.ADMIN.name());
+        user.getRoles().add(Constants.AuthorityEnum.ADMIN);
         userRepository.save(user);
         return user.getId();
     }
