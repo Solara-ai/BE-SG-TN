@@ -8,8 +8,10 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Document(collection = "organizations")
@@ -25,4 +27,12 @@ public class Organizations {
     private String name;
     private List<String> admins;
     private List<String> members;
+    @Field(targetType = FieldType.DATE_TIME)
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Field(targetType = FieldType.DATE_TIME)
+    private Instant updatedAt;
+    @Field(targetType = FieldType.DATE_TIME)
+    private Instant deletedAt;
+
 }

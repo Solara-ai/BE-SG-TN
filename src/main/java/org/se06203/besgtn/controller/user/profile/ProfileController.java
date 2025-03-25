@@ -3,7 +3,9 @@ package org.se06203.besgtn.controller.user.profile;
 import groovy.util.logging.Slf4j;
 import lombok.AllArgsConstructor;
 import org.se06203.besgtn.config.response.BaseDataResponse;
+import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
+import org.se06203.besgtn.dto.request.ProfileRequest;
 import org.se06203.besgtn.dto.response.ProfileResponse;
 import org.se06203.besgtn.service.users.impl.ProfileService;
 import org.springframework.http.HttpStatus;
@@ -21,5 +23,11 @@ public class ProfileController implements ProfileApi{
     @Override
     public ResponseEntity<BaseDataResponse<ProfileResponse>> getProfile() {
         return responseFactory.success(HttpStatus.OK, profileService.getProfile());
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> updateProfile(ProfileRequest profileRequest) {
+        profileService.updateProfile(profileRequest);
+        return responseFactory.success(HttpStatus.OK);
     }
 }

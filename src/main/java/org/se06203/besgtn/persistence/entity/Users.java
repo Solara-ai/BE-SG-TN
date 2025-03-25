@@ -4,7 +4,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
+
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -39,4 +41,11 @@ public class Users {
     private String hobbies;
     private String occupation;
     private List<String> roles;
+    @Field(targetType = FieldType.DATE_TIME)
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Field(targetType = FieldType.DATE_TIME)
+    private Instant updatedAt;
+    @Field(targetType = FieldType.DATE_TIME)
+    private Instant deletedAt;
 }
