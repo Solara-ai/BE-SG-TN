@@ -2,7 +2,7 @@ package org.se06203.besgtn.utils.method;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.se06203.besgtn.dto.request.ScheduleDto.UpdateScheduleReq;
+import org.se06203.besgtn.dto.request.scheduleDto.UpdateScheduleReq;
 import org.se06203.besgtn.persistence.entity.ChildSchedule;
 import org.se06203.besgtn.persistence.entity.ScheduleException;
 import org.se06203.besgtn.persistence.entity.Schedules;

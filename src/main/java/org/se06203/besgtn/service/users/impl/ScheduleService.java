@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.SecurityUtils;
-import org.se06203.besgtn.dto.request.ScheduleDto.*;
+import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
 import org.se06203.besgtn.persistence.entity.Categories;
 import org.se06203.besgtn.persistence.entity.ChildSchedule;
 import org.se06203.besgtn.persistence.entity.ScheduleException;
@@ -203,7 +206,7 @@ public class ScheduleService {
                 .toList();
     }
 
-    public List<GetDateTime> getListSchedules() {
+    public List<GetDateTimeRes> getListSchedules() {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
         var schedules = scheduleRepository.findAllByUserId(userId);
         var categories = categoryRepository.findAll();
@@ -236,11 +239,11 @@ public class ScheduleService {
                             });
                 })
                 .distinct()
-                .sorted(Comparator.comparing(GetDateTime::getDate))
+                .sorted(Comparator.comparing(GetDateTimeRes::getDate))
                 .toList();
     }
 
-    public GetDetailSchedule getScheduleDetailByEventId(String eventId) {
+    public GetDetailScheduleRes getScheduleDetailByEventId(String eventId) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
         var categories = categoryRepository.findAll();
         var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)

@@ -37,6 +37,6 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Constants.Gender gender;
     private String hobbies;
-    private String Occupation;
+    private String occupation;
     private List<String> roles;
 }

@@ -1,0 +1,25 @@
+package org.se06203.besgtn.controller.user.profile;
+
+import groovy.util.logging.Slf4j;
+import lombok.AllArgsConstructor;
+import org.se06203.besgtn.config.response.BaseDataResponse;
+import org.se06203.besgtn.config.response.ResponseFactory;
+import org.se06203.besgtn.dto.response.ProfileResponse;
+import org.se06203.besgtn.service.users.impl.ProfileService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@Slf4j
+@AllArgsConstructor
+public class ProfileController implements ProfileApi{
+
+    private final ProfileService profileService;
+    private final ResponseFactory responseFactory;
+
+    @Override
+    public ResponseEntity<BaseDataResponse<ProfileResponse>> getProfile() {
+        return responseFactory.success(HttpStatus.OK, profileService.getProfile());
+    }
+}

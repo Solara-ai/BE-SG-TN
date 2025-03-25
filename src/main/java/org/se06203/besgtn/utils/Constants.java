@@ -17,16 +17,7 @@ public class Constants {
     }
 
     public enum RepeatType {
-        @Schema(description = "Repeat daily", example = "DAILY")
-        DAILY,
-        @Schema(description = "Repeat weekly", example = "WEEKLY")
-        WEEKLY,
-        @Schema(description = "Repeat monthly", example = "MONTHLY")
-        MONTHLY,
-        @Schema(description = "Repeat yearly", example = "YEARLY")
-        YEARLY,
-        @Schema(description = "No repeat", example = "NONE")
-        NONE
+        DAILY, WEEKLY, MONTHLY, YEARLY, NONE
     }
 
     public enum Gender {
@@ -34,12 +25,7 @@ public class Constants {
     }
 
     public enum RepeatUpdateType {
-        @Schema(description = "Update all events in schedule", example = "ALL")
-        ALL,
-        @Schema(description = "Update only this event", example = "THIS")
-        THIS,
-        @Schema(description = "Update from this events to the end of event in schedule", example = "CONTINUE")
-        CONTINUE
+        ALL, THIS, CONTINUE
     }
 
     @Getter
