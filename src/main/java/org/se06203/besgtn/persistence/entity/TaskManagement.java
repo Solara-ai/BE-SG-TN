@@ -6,9 +6,10 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document(collection = "task_management")
 @Data
@@ -17,7 +18,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @TypeAlias("task_management")
 public class TaskManagement {
-    @Id
+
+    @MongoId(FieldType.STRING)
     @Builder.Default
     private String id = new ObjectId().toString();
     private String nameEpic;

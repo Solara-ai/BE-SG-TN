@@ -5,9 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Data
 @Builder
@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 @AllArgsConstructor
 public class ChildSchedule {
 
-    @Id
+    @MongoId(FieldType.STRING)
     @Builder.Default
     private String id = new ObjectId().toString();
 
