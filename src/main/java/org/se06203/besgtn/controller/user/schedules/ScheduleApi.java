@@ -1,7 +1,10 @@
 package org.se06203.besgtn.controller.user.schedules;
 
 import org.se06203.besgtn.config.response.BaseDataResponse;
-import org.se06203.besgtn.dto.request.ScheduleDto.*;
+import org.se06203.besgtn.dto.request.scheduleDto.*;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
 import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +40,12 @@ public interface ScheduleApi {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(tags = "Schedules", summary = "Get List Schedules.")
-    ResponseEntity<BaseDataResponse<List<GetDateTime>>> getListSchedules();
+    ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules();
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(tags = "Schedules", summary = "Get Schedule Detail By Event Id.")
-    ResponseEntity<BaseDataResponse<GetDetailSchedule>> getScheduleDetailByEventId(@PathVariable String eventId);
+    ResponseEntity<BaseDataResponse<GetDetailScheduleRes>> getScheduleDetailByEventId(@PathVariable String eventId);
 
     @DeleteMapping("/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

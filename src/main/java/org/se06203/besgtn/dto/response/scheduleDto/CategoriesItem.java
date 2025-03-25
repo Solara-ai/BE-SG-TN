@@ -1,4 +1,4 @@
-package org.se06203.besgtn.dto.request.ScheduleDto;
+package org.se06203.besgtn.dto.response.scheduleDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

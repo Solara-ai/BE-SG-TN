@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
-import org.se06203.besgtn.dto.request.ScheduleDto.*;
+import org.se06203.besgtn.dto.request.scheduleDto.*;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
+import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
 import org.se06203.besgtn.service.users.impl.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,12 +42,12 @@ public class ScheduleController implements ScheduleApi{
     }
 
     @Override
-    public ResponseEntity<BaseDataResponse<List<GetDateTime>>> getListSchedules() {
+    public ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules() {
         return responseFactory.success(HttpStatus.OK, scheduleService.getListSchedules());
     }
 
     @Override
-    public ResponseEntity<BaseDataResponse<GetDetailSchedule>> getScheduleDetailByEventId(String eventId) {
+    public ResponseEntity<BaseDataResponse<GetDetailScheduleRes>> getScheduleDetailByEventId(String eventId) {
         return responseFactory.success(HttpStatus.OK, scheduleService.getScheduleDetailByEventId(eventId));
     }
 

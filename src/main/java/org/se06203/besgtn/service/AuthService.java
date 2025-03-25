@@ -69,7 +69,7 @@ public class AuthService extends BaseHandler {
                 .hobbies(request.getHobbies())
                 .fullName(request.getFullName())
                 .birthday(request.getBirthday())
-                .Occupation(request.getOccupation())
+                .occupation(request.getOccupation())
                 .gender(request.getGender())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
