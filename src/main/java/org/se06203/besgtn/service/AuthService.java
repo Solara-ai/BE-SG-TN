@@ -1,17 +1,16 @@
-package org.se06203.besgtn.service.users.impl;
+package org.se06203.besgtn.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.JwtService;
-import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.request.EmailRequest;
-import org.se06203.besgtn.dto.request.RegisterRequest;
+import org.se06203.besgtn.dto.request.RegisterAdminRequest;
+import org.se06203.besgtn.dto.request.RegisterUserRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.persistence.entity.Users;
 import org.se06203.besgtn.persistence.repository.UserRepository;
-import org.se06203.besgtn.service.BaseHandler;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,11 +34,11 @@ public class AuthService extends BaseHandler {
     }
 
     @Transactional
-    public AuthenticateResponse authenticate(EmailRequest request) {
+    public AuthenticateResponse authenticate(EmailRequest request, Constants.AuthorityEnum authority) {
 
         SpringSecurityUser springSecurityUser = getAuthenticatedUser(request.getEmail(),
                 request.getPassword(),
-                Constants.AuthorityEnum.USER);
+                authority);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 springSecurityUser,
@@ -55,24 +54,16 @@ public class AuthService extends BaseHandler {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String register(RegisterRequest request) {
-        var user = userRepository.findByEmailAndRoleIn(request.getEmail(), Constants.AuthorityEnum.USER.name());
-        var existingUser = new Users();
-        if (user.isPresent()) {
-            existingUser = user.get();
+    public String registerUser(RegisterUserRequest request) {
+        userRepository.findByEmailAndRoleIn(request.getEmail(), Constants.AuthorityEnum.USER.name())
+                .ifPresent(users -> {
+                    throw new BaseRuntimeException(ErrorCodeMsg.USER_ALREADY_EXIST);
+                });
 
-            if (existingUser.getRoles().contains(Constants.AuthorityEnum.USER.name())) {
-                throw new BaseRuntimeException(ErrorCodeMsg.USER_ALREADY_EXIST);
-            }
+        List<String> roles = new ArrayList<>();
+        roles.add(Constants.AuthorityEnum.USER.name());
 
-            existingUser.getRoles().add(Constants.AuthorityEnum.USER.name());
-        } else {
-            List<String> roles = new ArrayList<>();
-            roles.add(Constants.AuthorityEnum.USER.name());
-            existingUser.setRoles(roles);
-        }
-
-        Users newUser = userRepository.save(existingUser.toBuilder()
+        return userRepository.save(Users.builder()
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .hobbies(request.getHobbies())
@@ -81,8 +72,20 @@ public class AuthService extends BaseHandler {
                 .Occupation(request.getOccupation())
                 .gender(request.getGender())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .build());
+                .roles(roles)
+                .build()).getId();
+    }
 
-        return newUser.getId();
+    @Transactional
+    public String register(RegisterAdminRequest request) {
+        var user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
+        if (user.getRoles().contains(Constants.AuthorityEnum.ADMIN.name())) {
+            throw new BaseRuntimeException(ErrorCodeMsg.USER_ALREADY_EXIST);
+        }
+
+        user.getRoles().add(Constants.AuthorityEnum.ADMIN.name());
+        userRepository.save(user);
+        return user.getId();
     }
 }

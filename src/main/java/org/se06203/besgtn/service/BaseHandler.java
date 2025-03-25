@@ -38,13 +38,17 @@ public class BaseHandler {
     }
 
     public SpringSecurityUser getAuthenticatedUser(String email, String password, Constants.AuthorityEnum authority) {
-        return getAuthenticatedUser(email, null, password, authority);
+        return switch (authority) {
+            case USER -> getAuthenticatedUser(email, null, password, authority);
+            case ADMIN -> getAuthenticatedAdmin(email, password, authority);
+            default -> throw new BaseRuntimeException(ErrorCodeMsg.INVALID_AUTHORITY);
+        };
     }
 
-    public SpringSecurityUser getAuthenticatedUser(String email,
-                                                   TokenPayload payload,
-                                                   String password,
-                                                   Constants.AuthorityEnum authority) {
+    private SpringSecurityUser getAuthenticatedUser(String email,
+                                                 TokenPayload payload,
+                                                 String password,
+                                                 Constants.AuthorityEnum authority) {
         if (StringUtils.isNotBlank(password)) {
             var user = userRepository
                     .findByEmailAndRoleIn(email, authority.name())
@@ -61,6 +65,28 @@ public class BaseHandler {
         return userRepository
                 .findByEmailAndRoleIn(email, Constants.AuthorityEnum.USER.name())
                 .map(user -> SpringSecurityUser.fromUser(user, Constants.AuthorityEnum.USER))
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
+    }
+
+    private SpringSecurityUser getAuthenticatedAdmin(String email,
+                                                  String password,
+                                                  Constants.AuthorityEnum authority) {
+        if (StringUtils.isNotBlank(password)) {
+            var user = userRepository
+                    .findByEmailAndRoleIn(email, authority.name())
+                    .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
+
+
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new BaseRuntimeException(ErrorCodeMsg.PASSWORD_OR_EMAIL_NOT_MATCH);
+            }
+            return SpringSecurityUser.fromUser(user, Constants.AuthorityEnum.ADMIN);
+        }
+
+
+        return userRepository
+                .findByEmailAndRoleIn(email, Constants.AuthorityEnum.ADMIN.name())
+                .map(user -> SpringSecurityUser.fromUser(user, Constants.AuthorityEnum.ADMIN))
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
     }
 }

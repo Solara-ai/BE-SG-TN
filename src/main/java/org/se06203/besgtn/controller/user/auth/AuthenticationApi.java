@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.dto.request.EmailRequest;
-import org.se06203.besgtn.dto.request.RegisterRequest;
+import org.se06203.besgtn.dto.request.RegisterUserRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +35,5 @@ public interface AuthenticationApi {
             @ApiResponse(responseCode = "404", description = "Không tìm thấy người dùng"),
             @ApiResponse(responseCode = "500", description = "Lỗi máy chủ nội bộ")
     })
-    ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterRequest request);
+    ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterUserRequest request);
 }

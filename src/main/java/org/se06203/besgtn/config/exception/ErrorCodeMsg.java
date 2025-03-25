@@ -26,7 +26,8 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
 
     // schedules
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),
-    CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND , "Category not found" ),;
+    CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND , "Category not found" ),
+    INVALID_AUTHORITY(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Invalid authority" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

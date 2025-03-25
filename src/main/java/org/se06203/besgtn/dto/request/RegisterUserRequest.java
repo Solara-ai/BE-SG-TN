@@ -15,7 +15,7 @@ import org.se06203.besgtn.utils.validation.ValidPhoneNumber;
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class RegisterRequest {
+public class RegisterUserRequest {
 
     @NotNull
     private String fullName;
