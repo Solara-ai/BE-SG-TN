@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCodeMsg implements BaseErrorCodeMsg {
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN, "access denied"),
+    NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "not found"),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED, "unauthorized"),
     PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Password or email not match" ),
@@ -28,7 +29,11 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),
     CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND , "Category not found" ),
     INVALID_AUTHORITY(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Invalid authority" ),
-    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Feedback not found" ),;
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Feedback not found" ),
+
+    // tasks and epics
+    EPIC_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Epic not found" ),
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Task not found" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

@@ -22,7 +22,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeAlias("schedules")
-@Builder
 public class Schedules {
 
     @MongoId(FieldType.STRING)

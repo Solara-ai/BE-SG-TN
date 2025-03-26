@@ -1,6 +1,7 @@
 package org.se06203.besgtn.utils;
 
 import lombok.Getter;
+
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -24,6 +25,18 @@ public class Constants {
         ALL, THIS, CONTINUE
     }
 
+    public enum TypeEpic {
+        WORK, STUDY
+    }
+
+    public enum TypeTask {
+        TO_DO, IN_PROGRESS, DONE
+    }
+
+    public enum Status {
+        COMPLETE, INCOMPLETE, ERROR
+    }
+
     @Getter
     public enum InternalHttpHeader {
         CORRELATION_ID("x-correlation-id"),
@@ -45,9 +58,11 @@ public class Constants {
                     .collect(Collectors.toSet());
         }
     }
+
     public enum GenderEnum {
-        MALE,FEMALE,OTHER
+        MALE, FEMALE, OTHER
     }
+
     public static final String PHONE_REGEX = "^[0-9]\\d{9,14}$";
     public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     public static final int DURATION_PER_SLOT = 30;

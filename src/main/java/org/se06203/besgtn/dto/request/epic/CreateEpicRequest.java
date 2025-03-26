@@ -1,6 +1,7 @@
 package org.se06203.besgtn.dto.request.epic;
 
 import lombok.*;
+import org.se06203.besgtn.utils.Constants;
 
 @Builder
 @NoArgsConstructor
@@ -10,5 +11,5 @@ import lombok.*;
 public class CreateEpicRequest {
     private String name;
     private String description;
-    private String type;
+    private Constants.TypeEpic type;
 }

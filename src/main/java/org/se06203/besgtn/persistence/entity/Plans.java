@@ -27,6 +27,7 @@ public class Plans {
     private String date;
     private Integer quantityTask;
     private List<String> taskIds;
+    private String status;
 }
 
 
