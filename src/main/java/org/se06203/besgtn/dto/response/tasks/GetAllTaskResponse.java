@@ -8,7 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 public class GetAllTaskResponse {
-//    private String id;
     private String epicName;
 
     private String description;

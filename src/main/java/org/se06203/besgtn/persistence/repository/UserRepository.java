@@ -21,4 +21,5 @@ public interface UserRepository extends MongoRepository<Users, String> {
             { email : ?0, roles : ?1 }
             """)
     Optional<Users> findByEmailAndRoleIn(String email, String role);
+
 }
