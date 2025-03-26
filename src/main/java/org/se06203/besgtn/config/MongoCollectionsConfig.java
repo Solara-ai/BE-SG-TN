@@ -25,10 +25,8 @@ public class MongoCollectionsConfig {
         seedCategories();
         seedConversations();
         seedFeedBacks();
-        seedMessages();
         seedOrganizations();
         seedPlans();
-        seedScheduleException();
         seedSchedules();
         seedTaskManagement();
         seedTasks();
@@ -65,16 +63,6 @@ public class MongoCollectionsConfig {
         }
     }
 
-    private void seedMessages() {
-        if (mongoTemplate.getCollection("messages").countDocuments() == 0) {
-            mongoTemplate.insert(new Document()
-                    .append("_id", UUID.randomUUID().toString())
-                    .append("conversationId", UUID.randomUUID().toString())
-                    .append("message", new Document("text", "Hello, how are you?"))
-                    .append("createdAt", LocalDateTime.now().toString()), "messages");
-        }
-    }
-
     private void seedOrganizations() {
         if (mongoTemplate.getCollection("organizations").countDocuments() == 0) {
             mongoTemplate.insert(new Document()
@@ -93,17 +81,6 @@ public class MongoCollectionsConfig {
                     .append("date", LocalDate.now().toString())
                     .append("quantityTask", 5)
                     .append("taskIds", List.of(UUID.randomUUID().toString())), "plans");
-        }
-    }
-
-    private void seedScheduleException() {
-        if (mongoTemplate.getCollection("scheduleException").countDocuments() == 0) {
-            mongoTemplate.insert(new Document()
-                    .append("_id", UUID.randomUUID().toString())
-                    .append("scheduleId", UUID.randomUUID().toString())
-                    .append("exceptionDate", LocalDate.now().plusDays(1).toString())
-                    .append("reason", "Holiday")
-                    .append("createdAt", LocalDateTime.now().toString()), "scheduleException");
         }
     }
 
