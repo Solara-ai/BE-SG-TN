@@ -4,16 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
+import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.dto.request.tasks.CreateTaskRequest;
 import org.se06203.besgtn.dto.response.tasks.GetTaskDetail;
 import org.se06203.besgtn.dto.response.tasks.GetTaskRes;
 import org.se06203.besgtn.dto.response.tasks.GetTotalTaskAndPlanResponse;
 import org.se06203.besgtn.dto.response.tasks.TaskItem;
+import org.se06203.besgtn.persistence.entity.Categories;
 import org.se06203.besgtn.persistence.entity.Tasks;
-import org.se06203.besgtn.persistence.repository.PlanRepository;
-import org.se06203.besgtn.persistence.repository.TaskManagementRepository;
-import org.se06203.besgtn.persistence.repository.TaskRepository;
+import org.se06203.besgtn.persistence.repository.*;
 import org.se06203.besgtn.utils.Constants;
+import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +25,45 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final PlanRepository planRepository;
     private final TaskManagementRepository taskManagementRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ChildScheduleMapper childScheduleMapper;
+    private final CategoryRepository categoryRepository;
 
-    public GetTotalTaskAndPlanResponse getTotalTaskAndPlansByStatus() {
+    public GetTotalTaskAndPlanResponse getTotalTaskAndPlansByStatus(String date) {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var categories = categoryRepository.findAll();
+
         long count = taskRepository.countByStatusNot(Constants.TypeTask.DONE);
         long count2 = planRepository.countByStatus(Constants.Status.INCOMPLETE);
+
+        var schedule = scheduleRepository.findById(userId)
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
+
+        var item = schedule.getChildSchedules().stream()
+                .filter(child -> date.contains(child.getDate()))
+                .map(child -> {
+                    var color = categories.stream()
+                            .filter(category -> category.getId().equals(schedule.getCategoryId()))
+                            .map(Categories::getColor)
+                            .findFirst()
+                            .orElse(null);
+
+                    var getListScheduleRes = childScheduleMapper.mapSchedulesToGetListScheduleRes(child);
+                    getListScheduleRes.setScheduleId(schedule.getId());
+                    getListScheduleRes.setDescription(schedule.getDescription());
+                    getListScheduleRes.setEventName(schedule.getName());
+                    getListScheduleRes.setCategoryColor(color);
+                    return getListScheduleRes;
+                })
+                .distinct()
+                .findFirst()
+                .orElse(null);
 
         return GetTotalTaskAndPlanResponse.builder()
                 .totalTasks(String.valueOf(count))
                 .totalPlans(String.valueOf(count2))
+                .schedule(item)
                 .build();
-
     }
 
     @Transactional

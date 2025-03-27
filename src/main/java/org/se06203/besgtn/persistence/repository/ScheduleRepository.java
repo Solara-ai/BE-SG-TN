@@ -20,21 +20,10 @@ public interface ScheduleRepository extends MongoRepository<Schedules, String> {
     @Query(value = "{ userId: ?0 }")
     List<Schedules> findAllByUserId(String userId);
 
-    @Query(value = "{ userId: ?0, 'childSchedules.date': ?1 }"
-//            ,fields = "{ 'id': 1, " +
-//                    "'userId': 1, " +
-//                    "'name': 1, " +
-//                    "'description': 1, " +
-//                    "'startTime': 1, " +
-//                    "'endTime': 1, " +
-//                    "'date': 1, " +
-//                    "'repeat': 1, " +
-//                    "'repeatEndDate': 1, " +
-//                    "'remindMe': 1, " +
-//                    "'categoryId': 1, " +
-//                    "'childSchedules': { $elemMatch: { 'date': ?1 } } }"
-                    )
+    @Query(value = "{ userId: ?0, 'childSchedules.date': ?1 }")
     List<Schedules> findAllByUserIdAndDate(String userId, String date);
 
     Optional<Schedules> findByChildSchedulesIdAndUserId(String eventId, String userId);
+
+    Optional<Schedules> findByDate(String date);
 }

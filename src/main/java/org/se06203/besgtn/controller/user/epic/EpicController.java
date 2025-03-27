@@ -93,7 +93,7 @@ public class EpicController implements EpicApi {
     }
 
     @Override
-    public ResponseEntity<BaseDataResponse<GetTotalTaskAndPlanResponse>> getTotalTaskAndPlans() {
-        return responseFactory.success(HttpStatus.OK, taskService.getTotalTaskAndPlansByStatus());
+    public ResponseEntity<BaseDataResponse<GetTotalTaskAndPlanResponse>> getTotalTaskAndPlans(String date) {
+        return responseFactory.success(HttpStatus.OK, taskService.getTotalTaskAndPlansByStatus(date));
     }
 }

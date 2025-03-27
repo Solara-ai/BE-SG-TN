@@ -93,5 +93,5 @@ public interface EpicApi {
     @GetMapping("/total")
     @ResponseStatus(HttpStatus.OK)
     @Operation(tags = "Epic", summary = "View Total Task and Plan")
-    ResponseEntity<BaseDataResponse<GetTotalTaskAndPlanResponse>> getTotalTaskAndPlans();
+    ResponseEntity<BaseDataResponse<GetTotalTaskAndPlanResponse>> getTotalTaskAndPlans(@RequestParam String date);
 }
