@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.JwtService;
-import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
-import org.se06203.besgtn.dto.common.TokenPayload;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.persistence.repository.UserRepository;
@@ -40,16 +38,15 @@ public class BaseHandler {
                 .build();
     }
 
-    public SpringSecurityUser getAuthenticatedUser(String email, String password, Constants.AuthorityEnum authority) {
+    public SpringSecurityUser getAuthenticated(String email, String password, Constants.AuthorityEnum authority) {
         return switch (authority) {
-            case USER -> getAuthenticatedUser(email, null, password, authority);
+            case USER -> getAuthenticatedUser(email, password, authority);
             case ADMIN -> getAuthenticatedAdmin(email, password, authority);
             default -> throw new BaseRuntimeException(ErrorCodeMsg.INVALID_AUTHORITY);
         };
     }
 
     private SpringSecurityUser getAuthenticatedUser(String email,
-                                                 TokenPayload payload,
                                                  String password,
                                                  Constants.AuthorityEnum authority) {
         if (StringUtils.isNotBlank(password)) {

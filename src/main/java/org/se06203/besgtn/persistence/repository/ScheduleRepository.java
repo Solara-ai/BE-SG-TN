@@ -1,5 +1,6 @@
 package org.se06203.besgtn.persistence.repository;
 
+import org.se06203.besgtn.dto.response.ViewSchedulesEventResponse;
 import org.se06203.besgtn.persistence.entity.Schedules;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
