@@ -1,10 +1,6 @@
 package org.se06203.besgtn.utils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.Locale;

@@ -47,7 +47,9 @@ public class AuthService extends BaseHandler {
         );
 
         try {
-            return super.setAuthenticationContextAndGenerateToken(authenticationToken, springSecurityUser.getId());
+            return super.setAuthenticationContextAndGenerateToken(authenticationToken,
+                    springSecurityUser.getId(),
+                    request.getRememberMe());
         } catch (BadCredentialsException ex) {
             throw new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND);
         }

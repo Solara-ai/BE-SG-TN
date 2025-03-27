@@ -26,7 +26,9 @@ public class BaseHandler {
     protected final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication, String userId) {
+    protected AuthenticateResponse setAuthenticationContextAndGenerateToken(Authentication authentication,
+                                                                            String userId,
+                                                                            Boolean rememberMe) {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var token = jwtService.createToken(authentication);
@@ -34,6 +36,7 @@ public class BaseHandler {
                 .token(token.token())
                 .refreshToken(jwtService.createRefreshToken(authentication))
                 .userId(userId)
+                .rememberMe(rememberMe)
                 .build();
     }
 
