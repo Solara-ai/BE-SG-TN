@@ -67,7 +67,8 @@ public class SecurityConfiguration {
                     CorsConfigurationSource source = request -> {
                         CorsConfiguration config = new CorsConfiguration();
                         config.setAllowedOriginPatterns(List.of("https://admin.time-flow.io.vn",
-                                "http://172.16.0.2:3000","http://10.24.63.72:3000", "http://localhost:3000"));
+                                "http://172.16.0.2:3000","http://10.24.63.72:3000", "http://localhost:3000",
+                                "http://localhost:3001"));
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                         config.setAllowCredentials(true);

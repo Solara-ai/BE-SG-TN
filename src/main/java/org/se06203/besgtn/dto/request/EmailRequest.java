@@ -18,5 +18,5 @@ public class EmailRequest {
     @ValidPasscode
     private String password;
 
-    private Boolean rememberMe;
+    private boolean rememberMe;
 }
