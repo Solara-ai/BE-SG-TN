@@ -15,5 +15,5 @@ public class ProfileResponse {
     private String birthday;
     private Constants.Gender gender;
     private String hobbies;
-    private String Occupation;
+    private String occupation;
 }

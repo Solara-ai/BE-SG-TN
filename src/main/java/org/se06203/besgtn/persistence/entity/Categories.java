@@ -21,6 +21,7 @@ public class Categories {
     @MongoId(FieldType.STRING)
     @Builder.Default
     private String id = new ObjectId().toString();
+    private String userId;
     private String name;
     private String color;
 }
