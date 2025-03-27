@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,6 +20,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @TypeAlias("feedbacks")
 public class FeedBacks {
 
@@ -31,7 +33,7 @@ public class FeedBacks {
     @Builder.Default
     private Instant createdAt = Instant.now();
     @Field(targetType = FieldType.DATE_TIME)
-    private Instant updatedAt;
+    private Instant updatedAt = Instant.now();
 }
 
 
