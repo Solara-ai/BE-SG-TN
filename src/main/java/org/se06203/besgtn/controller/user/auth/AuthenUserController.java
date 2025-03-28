@@ -6,6 +6,7 @@ import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.request.EmailRequest;
+import org.se06203.besgtn.dto.request.RefreshTokenReq;
 import org.se06203.besgtn.dto.request.RegisterUserRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
 import org.se06203.besgtn.service.AuthService;
@@ -30,5 +31,10 @@ public class AuthenUserController implements AuthenticationApi {
     @Override
     public ResponseEntity<BaseResponse> register(RegisterUserRequest request) {
         return responseFactory.success(HttpStatus.CREATED, authService.registerUser(request));
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<AuthenticateResponse>> refreshToken(RefreshTokenReq request) {
+        return responseFactory.success(HttpStatus.OK, authService.refreshToken(request, Constants.AuthorityEnum.USER));
     }
 }

@@ -15,6 +15,8 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED, "unauthorized"),
     PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Password or email not match" ),
 
+    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid refresh token" ),
+
     // validate
     MISSING_PARAMETERS(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "missing parameters"),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "invalid email"),
@@ -33,7 +35,8 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
 
     // tasks and epics
     EPIC_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Epic not found" ),
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Task not found" ),;
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Task not found" ),
+    ;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

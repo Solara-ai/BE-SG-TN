@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.dto.request.EmailRequest;
+import org.se06203.besgtn.dto.request.RefreshTokenReq;
 import org.se06203.besgtn.dto.request.RegisterUserRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
 import org.springframework.http.HttpStatus;
@@ -36,4 +37,9 @@ public interface AuthenticationApi {
             @ApiResponse(responseCode = "500", description = "Lỗi máy chủ nội bộ")
     })
     ResponseEntity<BaseResponse> register(@RequestBody @Valid RegisterUserRequest request);
+
+    @PostMapping("/refresh")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(tags = "Authentication", summary = "Refresh Token.")
+    ResponseEntity<BaseDataResponse<AuthenticateResponse>> refreshToken(@RequestBody RefreshTokenReq request);
 }

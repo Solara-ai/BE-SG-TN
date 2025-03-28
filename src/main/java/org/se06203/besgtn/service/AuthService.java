@@ -5,6 +5,7 @@ import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.security.JwtService;
 import org.se06203.besgtn.config.security.SpringSecurityUser;
 import org.se06203.besgtn.dto.request.EmailRequest;
+import org.se06203.besgtn.dto.request.RefreshTokenReq;
 import org.se06203.besgtn.dto.request.RegisterAdminRequest;
 import org.se06203.besgtn.dto.request.RegisterUserRequest;
 import org.se06203.besgtn.dto.response.AuthenticateResponse;
@@ -89,5 +90,9 @@ public class AuthService extends BaseHandler {
         user.getRoles().add(Constants.AuthorityEnum.ADMIN);
         userRepository.save(user);
         return user.getId();
+    }
+
+    public AuthenticateResponse refreshToken(RefreshTokenReq req, Constants.AuthorityEnum authorityEnum) {
+        return super.refreshToken(req, authorityEnum);
     }
 }

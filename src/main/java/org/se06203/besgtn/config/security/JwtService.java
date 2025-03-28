@@ -104,11 +104,12 @@ public class JwtService {
 
     public String createRefreshToken(Authentication authentication) {
         var jwtConfig = applicationConfig.getSecurity().getAuthentication().getJwt();
+        var authenticateUser = (SpringSecurityUser) authentication.getPrincipal();
         Date validity = new Date(System.currentTimeMillis() +
                 (jwtConfig.getRefreshTokenValidityInSeconds() * 1000));
 
         return this.defaultJwtBuilder()
-                .subject(authentication.getName())
+                .subject(authenticateUser.getEmail())
                 .expiration(validity)
                 .compact();
     }
@@ -119,7 +120,7 @@ public class JwtService {
         Date validity = new Date(System.currentTimeMillis() +
                 (rememberMe
                         ? jwtConfig.getTokenValidityInSecondsForRememberMe()
-                        : jwtConfig.getTokenValidityInSeconds()) * 1000);
+                        : jwtConfig.getTokenValidityInSeconds()) * 10000);
 
         return new TokenInfo(this.defaultJwtBuilder()
                 .claim(CLAIM_AUTHORITY, authenticateUser.getRole())
