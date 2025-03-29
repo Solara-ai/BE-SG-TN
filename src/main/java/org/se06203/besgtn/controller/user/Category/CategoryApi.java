@@ -22,7 +22,7 @@ public interface CategoryApi {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(tags = "Category", summary = "Create Category.")
-    ResponseEntity<BaseResponse> createCategory(InsertCategoryReq req);
+    ResponseEntity<BaseResponse> createCategory(@RequestBody InsertCategoryReq req);
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

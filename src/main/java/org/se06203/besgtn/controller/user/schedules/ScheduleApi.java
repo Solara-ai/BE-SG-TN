@@ -24,7 +24,7 @@ public interface ScheduleApi {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(tags = "Schedules", summary = "Create Schedule.")
-    ResponseEntity<BaseResponse> createSchedule(InsertScheduleReq req);
+    ResponseEntity<BaseResponse> createSchedule(@RequestBody InsertScheduleReq req);
 
     @PutMapping("/{ScheduleId}")
     @ResponseStatus(HttpStatus.OK)

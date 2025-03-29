@@ -13,9 +13,9 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "not found"),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED, "unauthorized"),
-    PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Password or email not match" ),
+    PASSWORD_OR_EMAIL_NOT_MATCH(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Password or email not match"),
 
-    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid refresh token" ),
+    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid refresh token"),
 
     // validate
     MISSING_PARAMETERS(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "missing parameters"),
@@ -23,19 +23,20 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     INVALID_PHONE_NUMBER(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "invalid phone number"),
 
     // users
-    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST , "User already exist"),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "User not found"),
-    REPEAT_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Repeat not found" ),
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "User already exist"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "User not found"),
+    REPEAT_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Repeat not found"),
 
     // schedules
-    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Schedule not found" ),
-    CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND , "Category not found" ),
-    INVALID_AUTHORITY(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Invalid authority" ),
-    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Feedback not found" ),
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Schedule not found"),
+    CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT.value(), HttpStatus.NOT_FOUND, "Category not found"),
+    INVALID_AUTHORITY(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Invalid authority"),
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Feedback not found"),
 
     // tasks and epics
-    EPIC_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Epic not found" ),
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND , "Task not found" ),
+    EPIC_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Epic not found"),
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Task not found"),
+    CATEGORY_NAME_OR_COLOR_IS_EMPTY(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Category name or color is empty"),
     ;
 
     private final int httpStatus;
