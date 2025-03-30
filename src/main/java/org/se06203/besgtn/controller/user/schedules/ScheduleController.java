@@ -4,16 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
+import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
 import org.se06203.besgtn.service.users.impl.UsersScheduleService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.YearMonth;
 import java.util.List;
 
 @Slf4j
@@ -42,8 +45,9 @@ public class ScheduleController implements ScheduleApi{
     }
 
     @Override
-    public ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules() {
-        return responseFactory.success(HttpStatus.OK, usersScheduleService.getListSchedules());
+    public ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules(int year, int month) {
+        var yearMonth = YearMonth.of(year, month);
+        return responseFactory.success(HttpStatus.OK, usersScheduleService.getListSchedules(yearMonth));
     }
 
     @Override

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,9 +14,5 @@ import java.time.LocalDate;
 public class GetDateTimeRes {
     @Schema(example = "yyy-mm-dd")
     private LocalDate date;
-    @Schema(example = "hh:MM:ss")
-    private String startTime;
-    @Schema(example = "hh:MM:ss")
-    private String endTime;
-    private String CategoryColor;
+    private List<String> CategoryColor;
 }
