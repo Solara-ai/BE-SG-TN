@@ -37,6 +37,9 @@ public class Constants {
         COMPLETE, INCOMPLETE, ERROR
     }
 
+    public enum StatusNotification {
+        PENDING,SENT,FAILED
+    }
     @Getter
     public enum InternalHttpHeader {
         CORRELATION_ID("x-correlation-id"),

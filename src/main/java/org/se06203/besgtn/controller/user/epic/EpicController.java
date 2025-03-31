@@ -59,8 +59,8 @@ public class EpicController implements EpicApi {
     }
 
     @Override
-    public ResponseEntity<BaseResponse> createTask(String id, CreateTaskRequest request) {
-        taskService.createTask(id, request);
+    public ResponseEntity<BaseResponse> createTask( CreateTaskRequest request) {
+        taskService.createTask( request);
         return responseFactory.success(HttpStatus.CREATED);
     }
 

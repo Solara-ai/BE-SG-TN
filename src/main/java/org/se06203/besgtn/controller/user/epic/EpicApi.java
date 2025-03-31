@@ -56,7 +56,7 @@ public interface EpicApi {
     @PostMapping("/{epicId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(tags = "Epic", summary = "Create Task")
-    ResponseEntity<BaseResponse> createTask(@PathVariable(value = "epicId") String id,
+    ResponseEntity<BaseResponse> createTask(
                                             @RequestBody CreateTaskRequest request);
 
     @GetMapping("/{epicId}/tasks")
