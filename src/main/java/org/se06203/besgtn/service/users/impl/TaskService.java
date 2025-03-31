@@ -67,8 +67,8 @@ public class TaskService {
     }
 
     @Transactional
-    public void createTask(String id, CreateTaskRequest request) {
-        var epic = taskManagementRepository.findActiveEpicById(id)
+    public void createTask( CreateTaskRequest request) {
+        var epic = taskManagementRepository.findActiveEpicById(request.getEpicId())
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.EPIC_NOT_FOUND));
 
         var tasks = Tasks.builder()
