@@ -75,6 +75,7 @@ public class TaskService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .epicId(epic.getId())
+                .status(Constants.TypeTask.TODO)
                 .build();
         taskRepository.save(tasks);
     }

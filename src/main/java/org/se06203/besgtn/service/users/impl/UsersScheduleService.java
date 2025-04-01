@@ -164,6 +164,7 @@ public class UsersScheduleService {
         scheduleRepository.save(Schedules.builder()
                 .userId(userId)
                 .name(req.getName())
+                .description(req.getDescription())
                 .startTime(req.getStartTime())
                 .endTime(req.getEndTime())
                 .date(req.getDate())
@@ -175,7 +176,7 @@ public class UsersScheduleService {
 
     public List<GetListScheduleRes> getListSchedulesByDate(String date) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAll();
+        var categories = categoryRepository.findAllByUserId(userId);
         var schedules = scheduleRepository.findAllByUserIdAndDate(userId, date);
 
         Map<String, List<String>> exceptionDates = schedules.stream()
@@ -214,6 +215,7 @@ public class UsersScheduleService {
 
     public List<GetDateTimeRes> getListSchedules(YearMonth yearMonth) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
+
         var schedules = scheduleRepository.findAllByUserIdAndChildDateBetween(
                 userId,
                 yearMonth.atDay(1).toString(),
@@ -222,46 +224,59 @@ public class UsersScheduleService {
         var categories = categoryRepository.findAllByUserId(userId);
 
         Map<String, String> categoryColorMap = categories.stream()
-                .collect(Collectors.toMap(Categories::getId, Categories::getColor));
+                .collect(Collectors.toMap(Categories::getId, Categories::getColor, (a, b) -> a));
 
-        var exceptionDates = schedules.stream()
+        Map<String, Set<String>> exceptionDates = schedules.stream()
                 .collect(Collectors.toMap(
                         Schedules::getId,
-                        schedule -> schedule.getExceptions() == null ? Set.of() :
-                                schedule.getExceptions().stream()
-                                        .map(ScheduleException::getExceptionDate)
-                                        .collect(Collectors.toSet())
+                        schedule -> Optional.ofNullable(schedule.getExceptions())
+                                .orElse(Collections.emptyList())
+                                .stream()
+                                .map(ScheduleException::getExceptionDate)
+                                .collect(Collectors.toSet()),
+                        (a, b) -> a
                 ));
 
-        Map<LocalDate, List<String>> eventDates = schedules.stream()
+        List<Map.Entry<Schedules, ChildSchedule>> filteredSchedules = schedules.stream()
+                .filter(schedule -> schedule.getChildSchedules() != null)
                 .flatMap(schedule -> schedule.getChildSchedules().stream()
+                        .filter(child -> child.getDate() != null)
                         .map(child -> Map.entry(schedule, child)))
-                .filter(entry -> !exceptionDates.getOrDefault(entry.getKey().getId(), Set.of())
+                .filter(entry -> !exceptionDates.getOrDefault(entry.getKey().getId(),
+                                Collections.emptySet())
                         .contains(entry.getValue().getDate()))
-                .map(entry -> Map.entry(
-                        LocalDate.parse(entry.getValue().getDate()),
-                        categoryColorMap.getOrDefault(entry.getKey().getCategoryId(), null)
-                ))
-                .filter(entry -> !entry.getKey().isBefore(yearMonth.atDay(1)) &&
-                        !entry.getKey().isAfter(yearMonth.atEndOfMonth()))
-                .collect(Collectors.groupingBy(
-                        Map.Entry::getKey,
-                        Collectors.filtering(entry -> entry.getValue() != null,
-                                Collectors.mapping(Map.Entry::getValue, Collectors.toList()))
-                ));
+                .toList();
 
+        try {
+            Map<LocalDate, List<String>> eventDates = filteredSchedules.stream()
+                    .map(entry -> Map.entry(
+                            LocalDate.parse(entry.getValue().getDate()),
+                            categoryColorMap.getOrDefault(entry.getKey().getCategoryId(), null)
+                    ))
+                    .filter(entry -> entry.getValue() != null)
+                    .filter(entry -> !entry.getKey().isBefore(yearMonth.atDay(1)) &&
+                            !entry.getKey().isAfter(yearMonth.atEndOfMonth()))
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getKey,
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                    ));
 
-        return eventDates.entrySet().stream()
-                .map(entry -> GetDateTimeRes.builder()
-                        .date(entry.getKey())
-                        .CategoryColor(entry.getValue())
-                        .build())
-                .collect(Collectors.toList());
+            return eventDates.entrySet().stream()
+                    .map(entry -> GetDateTimeRes.builder()
+                            .date(entry.getKey())
+                            .CategoryColor(entry.getValue())
+                            .build())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error when get list schedules", e);
+            throw new BaseRuntimeException(ErrorCodeMsg.CATEGORY_NOT_FOUND);
+        }
     }
+
 
     public GetDetailScheduleRes getScheduleDetailByEventId(String eventId) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAll();
+        var categories = categoryRepository.findAllByUserId(userId);
         var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
 

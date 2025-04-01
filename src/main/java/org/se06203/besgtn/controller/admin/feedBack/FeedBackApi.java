@@ -33,7 +33,7 @@ public interface FeedBackApi {
     ResponseEntity<BaseDataResponse<PagedData<SearchFeedBackRes>>> getFeedBack(
             @PageableDefault(page = 0,
                     size = 25,
-                    sort = FeedBacks.Fields.updatedAt) Pageable pageable);
+                    sort = FeedBacks.Fields.updatedAt + ",desc") Pageable pageable);
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

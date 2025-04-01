@@ -3,8 +3,10 @@ package org.se06203.besgtn.controller.admin.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.response.BaseDataResponse;
+import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.admin.response.GetListUsersResponse;
+import org.se06203.besgtn.dto.request.CreateUserRequest;
 import org.se06203.besgtn.service.admin.impl.AdminViewListUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +24,11 @@ public class UserManageController implements UserManageApi {
     @Override
     public ResponseEntity<BaseDataResponse<List<GetListUsersResponse>>> getAllUsers() {
         return responseFactory.success(HttpStatus.OK,adminViewListUserService.getListUser());
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> createUser(CreateUserRequest req) {
+        adminViewListUserService.createUser(req);
+        return responseFactory.success(HttpStatus.CREATED);
     }
 }

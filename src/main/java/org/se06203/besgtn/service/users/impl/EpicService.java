@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -40,15 +41,17 @@ public class EpicService {
     public List<GetEpicRes> getALlEpicByType(String type) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
         List<TaskManagement> epicAll;
-        if (type.isEmpty()) {
+        if (Objects.isNull(type) || type.isBlank()) {
             epicAll = taskManagementRepository.findAllActiveEpicsByUserId(userId);
         } else {
             epicAll = taskManagementRepository.findAllByTypeAndUserId(type, userId);
         }
         return epicAll.stream()
                 .map(epic -> GetEpicRes.builder()
+                        .id(epic.getId())
                         .nameEpic(epic.getNameEpic())
                         .description(epic.getDescription())
+                        .type(epic.getType())
                         .build()).toList();
     }
 

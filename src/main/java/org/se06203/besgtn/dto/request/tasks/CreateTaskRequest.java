@@ -11,6 +11,5 @@ import org.se06203.besgtn.utils.Constants;
 public class CreateTaskRequest {
 
     private String title;
-    private String epicId;
     private String description;
 }
