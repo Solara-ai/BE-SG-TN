@@ -3,8 +3,10 @@ package org.se06203.besgtn.service.admin.impl;
 import lombok.RequiredArgsConstructor;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
+import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.dto.admin.response.GetListUsersResponse;
 import org.se06203.besgtn.dto.request.CreateUserRequest;
+import org.se06203.besgtn.dto.response.ProfileResponse;
 import org.se06203.besgtn.persistence.repository.UserRepository;
 import org.se06203.besgtn.utils.Constants;
 import org.se06203.besgtn.utils.mapper.ProfileMapper;
@@ -45,5 +47,14 @@ public class AdminViewListUserService {
                 },
                 () -> userRepository.save(profileMapper.mapToCreateUserRequest(req))
         );
+    }
+
+    public ProfileResponse getProfile() {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.USER_NOT_FOUND));
+
+        return profileMapper.mapToProfileResponse(user);
     }
 }

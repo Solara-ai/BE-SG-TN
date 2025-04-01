@@ -17,6 +17,7 @@ import org.se06203.besgtn.persistence.entity.ScheduleException;
 import org.se06203.besgtn.persistence.entity.Schedules;
 import org.se06203.besgtn.persistence.repository.CategoryRepository;
 import org.se06203.besgtn.persistence.repository.ScheduleRepository;
+import org.se06203.besgtn.utils.Constants;
 import org.se06203.besgtn.utils.mapper.CategoriesMapper;
 import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
 import org.se06203.besgtn.utils.mapper.PagedDataMapper;
@@ -44,7 +45,6 @@ public class UsersScheduleService {
     private final ChildScheduleMapper childScheduleMapper;
     private final CategoryRepository categoryRepository;
     private final CategoriesMapper categoriesMapper;
-    private final PagedDataMapper pagedDataMapper;
 
     @Transactional
     public void createSchedule(InsertScheduleReq req) {
@@ -69,6 +69,9 @@ public class UsersScheduleService {
         }
         schedule.setChildSchedules(child);
         schedule.setUserId(userId);
+        schedule.setRepeatEndDate(req.getRepeat() != Constants.RepeatType.NONE
+                ? req.getRepeatEndDate()
+                : req.getDate());
 
         scheduleRepository.save(schedule);
     }
@@ -137,6 +140,7 @@ public class UsersScheduleService {
         schedule.getChildSchedules().removeIf(child -> child.getId().equals(req.getEventId()));
 
         var childSchedules = generateChildSchedules(null, req, updatedEventDate, repeatEndDate);
+        req.setRepeatEndDate(req.getDate());
         saveNewSchedule(req, userId, childSchedules);
 
         scheduleRepository.save(schedule);

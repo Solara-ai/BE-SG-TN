@@ -7,6 +7,7 @@ import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.admin.response.GetListUsersResponse;
 import org.se06203.besgtn.dto.request.CreateUserRequest;
+import org.se06203.besgtn.dto.response.ProfileResponse;
 import org.se06203.besgtn.service.admin.impl.AdminViewListUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,10 @@ public class UserManageController implements UserManageApi {
     public ResponseEntity<BaseResponse> createUser(CreateUserRequest req) {
         adminViewListUserService.createUser(req);
         return responseFactory.success(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<ProfileResponse>> getUserById() {
+        return responseFactory.success(HttpStatus.OK, adminViewListUserService.getProfile());
     }
 }
