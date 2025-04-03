@@ -37,7 +37,7 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     EPIC_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Epic not found"),
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, "Task not found"),
     CATEGORY_NAME_OR_COLOR_IS_EMPTY(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Category name or color is empty"),
-    ;
+    INVALID_EVENT_FORMAT(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid event format" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.security.SecurityUtils;
+import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
@@ -29,9 +30,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
@@ -55,7 +58,7 @@ public class UsersScheduleService {
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
 
         List<ChildSchedule> child = new ArrayList<>();
-        while (nextDate.isBefore(repeatEndDate)) {
+        if (req.getRepeat().equals(Constants.RepeatType.NONE)) {
             child.add(ChildSchedule.builder()
                     .id(new ObjectId().toString())
                     .title(req.getName())
@@ -64,14 +67,23 @@ public class UsersScheduleService {
                     .startTime(req.getStartTime())
                     .endTime(req.getEndTime())
                     .build());
+        } else {
+            while (nextDate.isBefore(repeatEndDate)) {
+                child.add(ChildSchedule.builder()
+                        .id(new ObjectId().toString())
+                        .title(req.getName())
+                        .weekday(nextDate.getDayOfWeek().toString())
+                        .date(nextDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .startTime(req.getStartTime())
+                        .endTime(req.getEndTime())
+                        .build());
 
-            nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+                nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+            }
         }
         schedule.setChildSchedules(child);
         schedule.setUserId(userId);
-        schedule.setRepeatEndDate(req.getRepeat() != Constants.RepeatType.NONE
-                ? req.getRepeatEndDate()
-                : req.getDate());
+        schedule.setRepeatEndDate(req.getRepeatEndDate());
 
         scheduleRepository.save(schedule);
     }
@@ -174,13 +186,14 @@ public class UsersScheduleService {
                 .date(req.getDate())
                 .repeat(req.getRepeat())
                 .categoryId(req.getCategoryId())
+                .repeatEndDate(req.getRepeatEndDate())
                 .childSchedules(childSchedules)
                 .build());
     }
 
     public List<GetListScheduleRes> getListSchedulesByDate(String date) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAllByUserId(userId);
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
         var schedules = scheduleRepository.findAllByUserIdAndDate(userId, date);
 
         Map<String, List<String>> exceptionDates = schedules.stream()
@@ -225,7 +238,7 @@ public class UsersScheduleService {
                 yearMonth.atDay(1).toString(),
                 yearMonth.atEndOfMonth().toString()
         );
-        var categories = categoryRepository.findAllByUserId(userId);
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
 
         Map<String, String> categoryColorMap = categories.stream()
                 .collect(Collectors.toMap(Categories::getId, Categories::getColor, (a, b) -> a));
@@ -280,7 +293,7 @@ public class UsersScheduleService {
 
     public GetDetailScheduleRes getScheduleDetailByEventId(String eventId) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAllByUserId(userId);
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
         var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
 
@@ -333,5 +346,58 @@ public class UsersScheduleService {
                 .build());
 
         scheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public void AddEvent(AddEventReq req) {
+        String[] lines = req.getMessage().split("\n");
+
+        // Tìm ngày từ dòng đầu tiên
+        var eventDate = extractDate(lines[0]);
+
+        if (eventDate == null) {
+            throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+        }
+
+        for (int i = 1; i < lines.length; i++) {
+            var line = lines[i].trim();
+
+            if (!line.matches("\\d{2}:\\d{2} - \\d{2}:\\d{2} \\| .*")) {
+                break;
+            }
+
+            var matcher = Constants.SCHEDULE_PATTERN.matcher(lines[i]);
+            if (matcher.matches()) {
+                var startTime = LocalTime.parse(matcher.group(1));
+                var endTime = LocalTime.parse(matcher.group(2));
+                var title = matcher.group(3);
+                var description = matcher.group(4);
+
+                createSchedule(InsertScheduleReq.builder()
+                        .name(title)
+                        .description(description)
+                        .startTime(startTime.toString())
+                        .endTime(endTime.toString())
+                        .date(eventDate.toString())
+                        .repeat(Constants.RepeatType.NONE)
+                        .repeatEndDate(eventDate.plusDays(1).toString())
+                        .categoryId("67eeccb8c6c7c104b25bc2db")
+                        .build());
+            } else {
+                throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+            }
+        }
+    }
+
+    private LocalDate extractDate(String text) {
+        var matcherVN = Constants.DATE_PATTERN_VN.matcher(text);
+        var matcherEN = Constants.DATE_PATTERN_EN.matcher(text);
+
+        if (matcherVN.find()) {
+            return LocalDate.parse(matcherVN.group(1), Constants.DATE_FORMATTER);
+        } else if (matcherEN.find()) {
+            return LocalDate.parse(matcherEN.group(1), Constants.DATE_FORMATTER);
+        }
+        return null;
     }
 }

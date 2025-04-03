@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
-import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.response.ResponseFactory;
+import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
 import org.se06203.besgtn.service.users.impl.UsersScheduleService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,5 +58,11 @@ public class ScheduleController implements ScheduleApi{
     public ResponseEntity<BaseResponse> deleteScheduleByEventId(String eventId) {
         usersScheduleService.deleteScheduleByEventId(eventId);
         return responseFactory.success(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> addEventToChatBot(AddEventReq req) {
+        usersScheduleService.AddEvent(req);
+        return responseFactory.success(HttpStatus.OK);
     }
 }

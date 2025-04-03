@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
+import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.InsertCategoryReq;
 import org.se06203.besgtn.dto.response.GetCategory;
 import org.springframework.http.HttpStatus;
