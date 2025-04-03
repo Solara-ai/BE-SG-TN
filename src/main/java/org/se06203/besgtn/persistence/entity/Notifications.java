@@ -39,4 +39,6 @@ public class Notifications {
     private Instant createdAt = Instant.now();
     private Instant sendTime = Instant.now();
 
+
+
 }

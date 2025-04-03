@@ -13,4 +13,8 @@ public class NotificationResponse {
     private Long sendTime;
     private String data;
     private String icon;
+
+
+
+
 }

@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class FCMService {
-
-
     private final FirebaseMessaging firebaseMessaging;
 
     public String sendNotification(NotificationMessageRequest request) {
@@ -38,6 +36,10 @@ public class FCMService {
         catch (FirebaseMessagingException e) {
             e.printStackTrace();
             return "Error while sending notification";
+
+
+
+
         }
     }
 }

@@ -22,4 +22,6 @@ public interface NotificationApi {
     @PostMapping("/send")
     ResponseEntity<BaseResponse> sendNotification(@RequestBody NotificationMessageRequest request);
 
+
+
 }

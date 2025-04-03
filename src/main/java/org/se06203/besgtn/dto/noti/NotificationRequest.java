@@ -15,4 +15,6 @@ public class NotificationRequest {
     private String tokenFCM;
     private String userId;
     private String status;
+
+
 }

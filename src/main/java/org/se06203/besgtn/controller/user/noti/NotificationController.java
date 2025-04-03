@@ -20,4 +20,6 @@ public class NotificationController implements NotificationApi
     public ResponseEntity<BaseResponse> sendNotification(NotificationMessageRequest request) {
         return responseFactory.success(HttpStatus.OK,fcmService.sendNotification(request));
     }
+
+
 }

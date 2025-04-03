@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 public class NotificationRecipient {
     @MongoId(FieldType.STRING)
     private String id = new ObjectId().toString();
-    private String notificationId; // Tham chiếu đến Notification
-    private String userId; // User nhận thông báo
+    private String notificationId;
+    private String userId;
 
 }

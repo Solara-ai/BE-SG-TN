@@ -16,4 +16,6 @@ public class NotificationMessageRequest {
     private String body;
     private String image;
     private Map<String, String> data;
+
+
 }
