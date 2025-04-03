@@ -16,5 +16,4 @@ public class NotificationRequest {
     private String userId;
     private String status;
 
-
 }

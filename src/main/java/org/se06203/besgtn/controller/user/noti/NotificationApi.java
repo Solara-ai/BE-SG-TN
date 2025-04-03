@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 
-
 @RequestMapping("/notification")
 @SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Notification", description = "Api for user authentication")
 public interface NotificationApi {
     @PostMapping("/send")
     ResponseEntity<BaseResponse> sendNotification(@RequestBody NotificationMessageRequest request);
-
 
 
 }

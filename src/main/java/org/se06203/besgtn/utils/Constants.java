@@ -40,10 +40,6 @@ public class Constants {
     public enum StatusNotification {
         PENDING,SENT,FAILED
     }
-
-
-
-
     public enum ReceiverNotification {
         USER,ADMIN
     }

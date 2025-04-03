@@ -37,9 +37,6 @@ public class FCMService {
             e.printStackTrace();
             return "Error while sending notification";
 
-
-
-
         }
     }
 }

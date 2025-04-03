@@ -14,5 +14,4 @@ public class NotificationDTORequest {
     private List<Notifications> recipient;
     private String message;
 
-
 }

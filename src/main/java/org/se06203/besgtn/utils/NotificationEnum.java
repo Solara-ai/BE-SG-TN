@@ -24,8 +24,6 @@ public enum NotificationEnum {
     private final String actionType;
 
 
-
-
     // Static maps for quick lookup
     public static final Map<String, String> ACTION_TYPE_BY_CODE = new HashMap<>();
     public static final Map<String, String> ACTION_MESS_BY_CODE = new HashMap<>();

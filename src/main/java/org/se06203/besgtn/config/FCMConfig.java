@@ -49,9 +49,6 @@ public class FCMConfig {
         }
     }
 
-
-
-
 //    @Bean
 //    FirebaseMessaging firebaseMessaging() throws IOException {
 //        GoogleCredentials googleCredentials = GoogleCredentials
@@ -64,5 +61,7 @@ public class FCMConfig {
 //        return FirebaseMessaging.getInstance(firebaseApp);
 //
 //    }
+
+
 
 }
