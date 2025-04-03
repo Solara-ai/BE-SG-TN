@@ -33,6 +33,7 @@ public class FeedBacks {
     @Builder.Default
     private Instant createdAt = Instant.now();
     @Field(targetType = FieldType.DATE_TIME)
+    @Builder.Default
     private Instant updatedAt = Instant.now();
 }
 

@@ -9,5 +9,6 @@ public interface CategoriesMapper {
 
     @Mapping(target = "categoryId", source = "id")
     @Mapping(target = "categoryName", source = "name")
+    @Mapping(target = "categoryColor", source = "color")
     CategoriesItem mapCategoriesToGetCategories(Categories categories);
 }

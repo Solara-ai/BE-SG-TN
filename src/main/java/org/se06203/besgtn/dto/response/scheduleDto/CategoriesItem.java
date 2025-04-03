@@ -10,5 +10,5 @@ import lombok.Data;
 public class CategoriesItem {
     private String categoryId;
     private String categoryName;
-    private String color;
+    private String categoryColor;
 }

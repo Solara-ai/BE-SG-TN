@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.FieldNameConstants;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.utils.Constants;
 import org.springframework.data.annotation.TypeAlias;
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "schedules")
@@ -21,6 +24,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @TypeAlias("schedules")
 public class Schedules {
 
@@ -49,5 +53,6 @@ public class Schedules {
     private boolean remindMe;
     private String categoryId;
     private List<ChildSchedule> childSchedules;
-    private List<ScheduleException> exceptions;
+    @Builder.Default
+    private List<ScheduleException> exceptions = new ArrayList<>();
 }

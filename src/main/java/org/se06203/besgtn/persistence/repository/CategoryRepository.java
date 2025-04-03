@@ -8,4 +8,6 @@ import java.util.List;
 public interface CategoryRepository extends MongoRepository<Categories, String> {
 
     List<Categories> findAllByUserId(String userId);
+
+    List<Categories> findAllByUserIdOrUserIdIsNull(String userId);
 }

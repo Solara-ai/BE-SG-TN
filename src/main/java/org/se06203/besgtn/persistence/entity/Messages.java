@@ -31,6 +31,7 @@ public class Messages {
     private String message;
 
     @Field(targetType = FieldType.DATE_TIME)
+    @Builder.Default
     private Instant createdAt = Instant.now();
 }
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
+import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.YearMonth;
 import java.util.List;
 
 @Slf4j
@@ -42,8 +44,9 @@ public class ScheduleController implements ScheduleApi{
     }
 
     @Override
-    public ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules() {
-        return responseFactory.success(HttpStatus.OK, usersScheduleService.getListSchedules());
+    public ResponseEntity<BaseDataResponse<List<GetDateTimeRes>>> getListSchedules(int year, int month) {
+        var yearMonth = YearMonth.of(year, month);
+        return responseFactory.success(HttpStatus.OK, usersScheduleService.getListSchedules(yearMonth));
     }
 
     @Override
@@ -55,5 +58,11 @@ public class ScheduleController implements ScheduleApi{
     public ResponseEntity<BaseResponse> deleteScheduleByEventId(String eventId) {
         usersScheduleService.deleteScheduleByEventId(eventId);
         return responseFactory.success(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse> addEventToChatBot(AddEventReq req) {
+        usersScheduleService.AddEvent(req);
+        return responseFactory.success(HttpStatus.OK);
     }
 }

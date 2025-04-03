@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
+import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.security.SecurityUtils;
+import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
@@ -16,16 +18,23 @@ import org.se06203.besgtn.persistence.entity.ScheduleException;
 import org.se06203.besgtn.persistence.entity.Schedules;
 import org.se06203.besgtn.persistence.repository.CategoryRepository;
 import org.se06203.besgtn.persistence.repository.ScheduleRepository;
+import org.se06203.besgtn.utils.Constants;
 import org.se06203.besgtn.utils.mapper.CategoriesMapper;
 import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
+import org.se06203.besgtn.utils.mapper.PagedDataMapper;
 import org.se06203.besgtn.utils.mapper.ScheduleMapper;
 import org.se06203.besgtn.utils.method.ScheduleUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
@@ -49,7 +58,7 @@ public class UsersScheduleService {
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
 
         List<ChildSchedule> child = new ArrayList<>();
-        while (nextDate.isBefore(repeatEndDate)) {
+        if (req.getRepeat().equals(Constants.RepeatType.NONE)) {
             child.add(ChildSchedule.builder()
                     .id(new ObjectId().toString())
                     .title(req.getName())
@@ -58,11 +67,23 @@ public class UsersScheduleService {
                     .startTime(req.getStartTime())
                     .endTime(req.getEndTime())
                     .build());
+        } else {
+            while (nextDate.isBefore(repeatEndDate)) {
+                child.add(ChildSchedule.builder()
+                        .id(new ObjectId().toString())
+                        .title(req.getName())
+                        .weekday(nextDate.getDayOfWeek().toString())
+                        .date(nextDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .startTime(req.getStartTime())
+                        .endTime(req.getEndTime())
+                        .build());
 
-            nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+                nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+            }
         }
         schedule.setChildSchedules(child);
         schedule.setUserId(userId);
+        schedule.setRepeatEndDate(req.getRepeatEndDate());
 
         scheduleRepository.save(schedule);
     }
@@ -131,6 +152,7 @@ public class UsersScheduleService {
         schedule.getChildSchedules().removeIf(child -> child.getId().equals(req.getEventId()));
 
         var childSchedules = generateChildSchedules(null, req, updatedEventDate, repeatEndDate);
+        req.setRepeatEndDate(req.getDate());
         saveNewSchedule(req, userId, childSchedules);
 
         scheduleRepository.save(schedule);
@@ -158,18 +180,20 @@ public class UsersScheduleService {
         scheduleRepository.save(Schedules.builder()
                 .userId(userId)
                 .name(req.getName())
+                .description(req.getDescription())
                 .startTime(req.getStartTime())
                 .endTime(req.getEndTime())
                 .date(req.getDate())
                 .repeat(req.getRepeat())
                 .categoryId(req.getCategoryId())
+                .repeatEndDate(req.getRepeatEndDate())
                 .childSchedules(childSchedules)
                 .build());
     }
 
     public List<GetListScheduleRes> getListSchedulesByDate(String date) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAll();
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
         var schedules = scheduleRepository.findAllByUserIdAndDate(userId, date);
 
         Map<String, List<String>> exceptionDates = schedules.stream()
@@ -206,63 +230,83 @@ public class UsersScheduleService {
                 .toList();
     }
 
-    public List<GetDateTimeRes> getListSchedules() {
+    public List<GetDateTimeRes> getListSchedules(YearMonth yearMonth) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var schedules = scheduleRepository.findAllByUserId(userId);
-        var categories = categoryRepository.findAll();
 
-        // Tạo map chứa danh sách exception theo scheduleId
-        Map<String, List<String>> exceptionDates = schedules.stream()
+        var schedules = scheduleRepository.findAllByUserIdAndChildDateBetween(
+                userId,
+                yearMonth.atDay(1).toString(),
+                yearMonth.atEndOfMonth().toString()
+        );
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
+
+        Map<String, String> categoryColorMap = categories.stream()
+                .collect(Collectors.toMap(Categories::getId, Categories::getColor, (a, b) -> a));
+
+        Map<String, Set<String>> exceptionDates = schedules.stream()
                 .collect(Collectors.toMap(
                         Schedules::getId,
-                        schedule -> schedule.getExceptions() == null ? Collections.emptyList()
-                                : schedule.getExceptions().stream()
+                        schedule -> Optional.ofNullable(schedule.getExceptions())
+                                .orElse(Collections.emptyList())
+                                .stream()
                                 .map(ScheduleException::getExceptionDate)
-                                .toList()
+                                .collect(Collectors.toSet()),
+                        (a, b) -> a
                 ));
 
-        return schedules.parallelStream()
-                .flatMap(schedule -> {
-                    var exceptions = exceptionDates.getOrDefault(schedule.getId(), Collections.emptyList());
-                    var categoryColor = categories.stream()
-                            .filter(category -> category.getId().equals(schedule.getCategoryId()))
-                            .map(Categories::getColor)
-                            .findFirst()
-                            .orElse(null);
-
-                    return schedule.getChildSchedules().stream()
-                            .filter(child -> !exceptions.contains(child.getDate()))
-                            .map(child -> {
-                                var getDateTime = childScheduleMapper.mapSchedulesToGetDateTime(child);
-                                getDateTime.setCategoryColor(categoryColor);
-                                return getDateTime;
-                            });
-                })
-                .distinct()
-                .sorted(Comparator.comparing(GetDateTimeRes::getDate))
+        List<Map.Entry<Schedules, ChildSchedule>> filteredSchedules = schedules.stream()
+                .filter(schedule -> schedule.getChildSchedules() != null)
+                .flatMap(schedule -> schedule.getChildSchedules().stream()
+                        .filter(child -> child.getDate() != null)
+                        .map(child -> Map.entry(schedule, child)))
+                .filter(entry -> !exceptionDates.getOrDefault(entry.getKey().getId(),
+                                Collections.emptySet())
+                        .contains(entry.getValue().getDate()))
                 .toList();
+
+        try {
+            Map<LocalDate, List<String>> eventDates = filteredSchedules.stream()
+                    .map(entry -> Map.entry(
+                            LocalDate.parse(entry.getValue().getDate()),
+                            categoryColorMap.getOrDefault(entry.getKey().getCategoryId(), null)
+                    ))
+                    .filter(entry -> entry.getValue() != null)
+                    .filter(entry -> !entry.getKey().isBefore(yearMonth.atDay(1)) &&
+                            !entry.getKey().isAfter(yearMonth.atEndOfMonth()))
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getKey,
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                    ));
+
+            return eventDates.entrySet().stream()
+                    .map(entry -> GetDateTimeRes.builder()
+                            .date(entry.getKey())
+                            .CategoryColor(entry.getValue())
+                            .build())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error when get list schedules", e);
+            throw new BaseRuntimeException(ErrorCodeMsg.CATEGORY_NOT_FOUND);
+        }
     }
+
 
     public GetDetailScheduleRes getScheduleDetailByEventId(String eventId) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
-        var categories = categoryRepository.findAll();
+        var categories = categoryRepository.findAllByUserIdOrUserIdIsNull(userId);
         var schedule = scheduleRepository.findByChildSchedulesIdAndUserId(eventId, userId)
                 .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND));
 
         var childSchedules = schedule.getChildSchedules().stream()
                 .filter(child -> child.getId().equals(eventId))
+                .filter(child -> schedule.getExceptions().stream()
+                        .noneMatch(scheduleException -> scheduleException.getExceptionDate()
+                                .equals(child.getDate()))
+                )
                 .toList();
 
         if (childSchedules.isEmpty()) {
             throw new BaseRuntimeException(ErrorCodeMsg.SCHEDULE_NOT_FOUND);
-        }
-
-        var childEvent = childSchedules.get(0);
-        var exceptionExists = schedule.getExceptions().stream()
-                .anyMatch(ex -> ex.getExceptionDate().equals(childEvent.getDate()));
-
-        if (exceptionExists) {
-            return null;
         }
 
         schedule.setChildSchedules(childSchedules);
@@ -302,5 +346,58 @@ public class UsersScheduleService {
                 .build());
 
         scheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public void AddEvent(AddEventReq req) {
+        String[] lines = req.getMessage().split("\n");
+
+        // Tìm ngày từ dòng đầu tiên
+        var eventDate = extractDate(lines[0]);
+
+        if (eventDate == null) {
+            throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+        }
+
+        for (int i = 1; i < lines.length; i++) {
+            var line = lines[i].trim();
+
+            if (!line.matches("\\d{2}:\\d{2} - \\d{2}:\\d{2} \\| .*")) {
+                break;
+            }
+
+            var matcher = Constants.SCHEDULE_PATTERN.matcher(lines[i]);
+            if (matcher.matches()) {
+                var startTime = LocalTime.parse(matcher.group(1));
+                var endTime = LocalTime.parse(matcher.group(2));
+                var title = matcher.group(3);
+                var description = matcher.group(4);
+
+                createSchedule(InsertScheduleReq.builder()
+                        .name(title)
+                        .description(description)
+                        .startTime(startTime.toString())
+                        .endTime(endTime.toString())
+                        .date(eventDate.toString())
+                        .repeat(Constants.RepeatType.NONE)
+                        .repeatEndDate(eventDate.plusDays(1).toString())
+                        .categoryId("67eeccb8c6c7c104b25bc2db")
+                        .build());
+            } else {
+                throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+            }
+        }
+    }
+
+    private LocalDate extractDate(String text) {
+        var matcherVN = Constants.DATE_PATTERN_VN.matcher(text);
+        var matcherEN = Constants.DATE_PATTERN_EN.matcher(text);
+
+        if (matcherVN.find()) {
+            return LocalDate.parse(matcherVN.group(1), Constants.DATE_FORMATTER);
+        } else if (matcherEN.find()) {
+            return LocalDate.parse(matcherEN.group(1), Constants.DATE_FORMATTER);
+        }
+        return null;
     }
 }
