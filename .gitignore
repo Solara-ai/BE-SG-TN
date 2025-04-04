@@ -34,3 +34,9 @@ y cảm
 # =============================
 .DS_Store       # macOS
 Thumbs.db       # Windows
+
+# =============================
+# 6️⃣ Loại bỏ tệp Firebase
+# =============================
+/src/resources/firebase/
+sgtm-backend-firebase-adminsdk-*.json
