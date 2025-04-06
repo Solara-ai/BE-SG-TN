@@ -7,6 +7,9 @@ spring:
     name: BE-SG-TN
   profiles:
     active: ${PROFILE}
+    group:
+        local: core, fcm, kafka, minio, quartz, redis, webclient
+        server: core, fcm, kafka, minio, quartz, redis, webclient, authorize
   jpa:
     show-sql: true
     properties:

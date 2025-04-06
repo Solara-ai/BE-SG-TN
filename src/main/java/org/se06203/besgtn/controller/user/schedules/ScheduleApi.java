@@ -3,6 +3,7 @@ package org.se06203.besgtn.controller.user.schedules;
 import org.se06203.besgtn.config.response.BaseDataResponse;
 import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
+import org.se06203.besgtn.dto.response.GenEvent;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
@@ -58,4 +59,9 @@ public interface ScheduleApi {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(tags = "Schedules", summary = "Add Event to ChatBot.")
     ResponseEntity<BaseResponse> addEventToChatBot(@RequestBody AddEventReq req);
+
+    @GetMapping("/gen-event")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(tags = "Schedules", summary = "Generate Event for ChatBot.")
+    ResponseEntity<BaseDataResponse<GenEvent>> genEvent(@RequestParam String message);
 }

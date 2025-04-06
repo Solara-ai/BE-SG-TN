@@ -1,0 +1,20 @@
+webclient:
+  connect-timeout: 50000
+  requestTimeout: 50000
+  base-url: ${WEBCLIENT_BASE_URL:http://localhost:8000}
+  post-chat-path: /api/v1/solara/ai/chat
+
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        waitDurationInOpenState: 10000
+        failureRateThreshold: 50
+        writable-stack-trace-enabled: true
+        sliding-window-type: count_based
+    instances:
+      test-client:
+        base-config: default
+        wait-duration-in-open-state: 5s

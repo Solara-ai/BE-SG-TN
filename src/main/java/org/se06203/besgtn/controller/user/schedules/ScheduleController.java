@@ -7,6 +7,7 @@ import org.se06203.besgtn.config.response.BaseResponse;
 import org.se06203.besgtn.config.response.ResponseFactory;
 import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
+import org.se06203.besgtn.dto.response.GenEvent;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
@@ -63,6 +64,11 @@ public class ScheduleController implements ScheduleApi{
     @Override
     public ResponseEntity<BaseResponse> addEventToChatBot(AddEventReq req) {
         usersScheduleService.AddEvent(req);
-        return responseFactory.success(HttpStatus.OK);
+        return responseFactory.success(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<BaseDataResponse<GenEvent>> genEvent(String message) {
+        return responseFactory.success(HttpStatus.OK, usersScheduleService.genEvent(message));
     }
 }

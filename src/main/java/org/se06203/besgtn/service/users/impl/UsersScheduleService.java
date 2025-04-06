@@ -7,8 +7,11 @@ import org.se06203.besgtn.config.exception.BaseRuntimeException;
 import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.dto.request.AddEventReq;
+import org.se06203.besgtn.dto.request.ApiChatReq;
 import org.se06203.besgtn.dto.request.scheduleDto.*;
 import org.se06203.besgtn.config.exception.ErrorCodeMsg;
+import org.se06203.besgtn.dto.response.GenEvent;
+import org.se06203.besgtn.dto.response.scheduleDto.CategoriesItem;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDateTimeRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetDetailScheduleRes;
 import org.se06203.besgtn.dto.response.scheduleDto.GetListScheduleRes;
@@ -18,6 +21,7 @@ import org.se06203.besgtn.persistence.entity.ScheduleException;
 import org.se06203.besgtn.persistence.entity.Schedules;
 import org.se06203.besgtn.persistence.repository.CategoryRepository;
 import org.se06203.besgtn.persistence.repository.ScheduleRepository;
+import org.se06203.besgtn.service.client.ApiClient;
 import org.se06203.besgtn.utils.Constants;
 import org.se06203.besgtn.utils.mapper.CategoriesMapper;
 import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
@@ -48,6 +52,7 @@ public class UsersScheduleService {
     private final ChildScheduleMapper childScheduleMapper;
     private final CategoryRepository categoryRepository;
     private final CategoriesMapper categoriesMapper;
+    private final ApiClient apiClient;
 
     @Transactional
     public void createSchedule(InsertScheduleReq req) {
@@ -352,14 +357,13 @@ public class UsersScheduleService {
     public void AddEvent(AddEventReq req) {
         String[] lines = req.getMessage().split("\n");
 
-        // Tìm ngày từ dòng đầu tiên
         var eventDate = extractDate(lines[0]);
 
         if (eventDate == null) {
             throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
         }
 
-        for (int i = 1; i < lines.length; i++) {
+        for (int i = 2; i < lines.length; i++) {
             var line = lines[i].trim();
 
             if (!line.matches("\\d{2}:\\d{2} - \\d{2}:\\d{2} \\| .*")) {
@@ -399,5 +403,50 @@ public class UsersScheduleService {
             return LocalDate.parse(matcherEN.group(1), Constants.DATE_FORMATTER);
         }
         return null;
+    }
+
+    public GenEvent genEvent(String message) {
+        var userId = SecurityUtils.getAuthenticatedUser().getId();
+        var category = categoryRepository.findById("67eeccb8c6c7c104b25bc2db")
+                .orElseThrow(() -> new BaseRuntimeException(ErrorCodeMsg.CATEGORY_NOT_FOUND));
+
+        var response = apiClient.getChatResponse(ApiChatReq.builder()
+                .text(message)
+                .user_id(userId)
+                .build());
+        var data = response.getData().getMessages().get(0).getReply();
+        String[] lines = data.split("\n");
+
+        var eventDate = extractDate(lines[0]);
+
+        if (eventDate == null) {
+            throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+        }
+
+        var matcher = Constants.SCHEDULE_PATTERN.matcher(lines[1]);
+        if (matcher.matches()) {
+            var startTime = LocalTime.parse(matcher.group(1));
+            var endTime = LocalTime.parse(matcher.group(2));
+            var title = matcher.group(3);
+            var description = matcher.group(4);
+
+            return GenEvent.builder()
+                    .eventName(title)
+                    .description(description)
+                    .startTime(startTime.toString())
+                    .endTime(endTime.toString())
+                    .date(eventDate.toString())
+                    .repeat(Constants.RepeatType.NONE)
+                    .endDate(eventDate.plusDays(1).toString())
+                    .remindMe(false)
+                    .categories(CategoriesItem.builder()
+                            .categoryId(category.getId())
+                            .categoryName(category.getName())
+                            .categoryColor(category.getColor())
+                            .build())
+                    .build();
+        } else {
+            throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
+        }
     }
 }
