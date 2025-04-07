@@ -39,7 +39,8 @@ public enum ErrorCodeMsg implements BaseErrorCodeMsg {
     CATEGORY_NAME_OR_COLOR_IS_EMPTY(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Category name or color is empty"),
     INVALID_EVENT_FORMAT(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid event format" ),
     CAN_NOT_GET_CHAT_RESPONSE(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND , "Can not get chat response" ),
-    API_ERROR(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST , "API error" ),;
+    API_ERROR(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST , "API error" ),
+    EVENT_DUPLICATE(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST , "Event duplicate" ),;
 
     private final int httpStatus;
     private final HttpStatus resultCode;

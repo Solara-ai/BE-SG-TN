@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.se06203.besgtn.config.exception.BaseRuntimeException;
-import org.se06203.besgtn.config.response.PagedData;
 import org.se06203.besgtn.config.security.SecurityUtils;
 import org.se06203.besgtn.dto.request.AddEventReq;
 import org.se06203.besgtn.dto.request.ApiChatReq;
@@ -25,20 +24,17 @@ import org.se06203.besgtn.service.client.ApiClient;
 import org.se06203.besgtn.utils.Constants;
 import org.se06203.besgtn.utils.mapper.CategoriesMapper;
 import org.se06203.besgtn.utils.mapper.ChildScheduleMapper;
-import org.se06203.besgtn.utils.mapper.PagedDataMapper;
 import org.se06203.besgtn.utils.mapper.ScheduleMapper;
 import org.se06203.besgtn.utils.method.ScheduleUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.se06203.besgtn.utils.ConvertDateTime.convertStringToDate;
@@ -58,12 +54,17 @@ public class UsersScheduleService {
     public void createSchedule(InsertScheduleReq req) {
         var userId = SecurityUtils.getAuthenticatedUser().getId();
         var schedule = scheduleMapper.mapInsertScheduleReqToSchedules(req);
+        var allSchedule = scheduleRepository.findAllByUserId(userId);
 
         var nextDate = convertStringToDate(req.getDate());
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
 
         List<ChildSchedule> child = new ArrayList<>();
         if (req.getRepeat().equals(Constants.RepeatType.NONE)) {
+            var check = checkDuplicateEvent(allSchedule, req.getDate(), req.getStartTime(), req.getEndTime());
+            if (!check) {
+                throw new BaseRuntimeException(ErrorCodeMsg.EVENT_DUPLICATE);
+            }
             child.add(ChildSchedule.builder()
                     .id(new ObjectId().toString())
                     .title(req.getName())
@@ -74,6 +75,11 @@ public class UsersScheduleService {
                     .build());
         } else {
             while (nextDate.isBefore(repeatEndDate)) {
+                var check = checkDuplicateEvent(allSchedule, nextDate.toString(), req.getStartTime(), req.getEndTime());
+                if (!check) {
+                    nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+                    continue;
+                }
                 child.add(ChildSchedule.builder()
                         .id(new ObjectId().toString())
                         .title(req.getName())
@@ -84,6 +90,9 @@ public class UsersScheduleService {
                         .build());
 
                 nextDate = ScheduleUtils.incrementDate(nextDate, req.getRepeat(), repeatEndDate);
+            }
+            if (child.isEmpty()) {
+                throw new BaseRuntimeException(ErrorCodeMsg.EVENT_DUPLICATE);
             }
         }
         schedule.setChildSchedules(child);
@@ -110,8 +119,9 @@ public class UsersScheduleService {
     protected void updateFullSchedule(Schedules schedule, UpdateScheduleReq req) {
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
         var currentDate = convertStringToDate(req.getDate());
+        var allSchedule = scheduleRepository.findAllByUserId(SecurityUtils.getAuthenticatedUser().getId());
 
-        var childSchedules = generateChildSchedules(schedule, req, currentDate, repeatEndDate);
+        var childSchedules = generateChildSchedules(allSchedule, schedule, req, currentDate, repeatEndDate);
 
         schedule.setChildSchedules(childSchedules);
         scheduleRepository.save(schedule);
@@ -122,6 +132,7 @@ public class UsersScheduleService {
         var eventId = req.getEventId();
         var updatedEventDate = convertStringToDate(req.getDate());
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
+        var allSchedule = scheduleRepository.findAllByUserId(userId);
 
         schedule.getChildSchedules().stream()
                 .filter(child -> child.getId().equals(eventId))
@@ -134,7 +145,7 @@ public class UsersScheduleService {
         schedule.setRepeatEndDate(updatedEventDate.minusDays(1)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        var childSchedules = generateChildSchedules(null, req, updatedEventDate, repeatEndDate);
+        var childSchedules = generateChildSchedules(allSchedule, null, req, updatedEventDate, repeatEndDate);
         saveNewSchedule(req, userId, childSchedules);
 
         scheduleRepository.save(schedule);
@@ -144,6 +155,7 @@ public class UsersScheduleService {
     protected void updateSingleEvent(Schedules schedule, UpdateScheduleReq req, String userId) {
         var updatedEventDate = convertStringToDate(req.getDate());
         var repeatEndDate = convertStringToDate(req.getRepeatEndDate());
+        var allSchedule = scheduleRepository.findAllByUserId(userId);
 
         schedule.getChildSchedules().stream()
                 .filter(child -> child.getId().equals(req.getEventId()))
@@ -153,23 +165,30 @@ public class UsersScheduleService {
         if (schedule.getExceptions() == null) {
             schedule.setExceptions(new ArrayList<>());
         }
+
         schedule.getExceptions().add(ScheduleUtils.createScheduleException(req));
         schedule.getChildSchedules().removeIf(child -> child.getId().equals(req.getEventId()));
 
-        var childSchedules = generateChildSchedules(null, req, updatedEventDate, repeatEndDate);
+        var childSchedules = generateChildSchedules(allSchedule, null, req, updatedEventDate, repeatEndDate);
         req.setRepeatEndDate(req.getDate());
         saveNewSchedule(req, userId, childSchedules);
 
         scheduleRepository.save(schedule);
     }
 
-    private List<ChildSchedule> generateChildSchedules(Schedules schedule,
+    private List<ChildSchedule> generateChildSchedules(List<Schedules> allSchedule,
+                                                       Schedules schedule,
                                                        UpdateScheduleReq req,
                                                        LocalDate currentDate,
                                                        LocalDate repeatEndDate) {
         List<ChildSchedule> childSchedules = new ArrayList<>();
 
         while (currentDate.isBefore(repeatEndDate)) {
+            var check = checkDuplicateEvent(allSchedule, req.getDate(), req.getStartTime(), req.getEndTime());
+            if (!check) {
+                currentDate = ScheduleUtils.incrementDate(currentDate, req.getRepeat(), repeatEndDate);
+                continue;
+            }
             var formattedDate = ScheduleUtils.formatDate(currentDate);
             if (schedule != null && ScheduleUtils.isExceptionDate(schedule, formattedDate)) {
                 currentDate = ScheduleUtils.incrementDate(currentDate, req.getRepeat(), repeatEndDate);
@@ -177,6 +196,9 @@ public class UsersScheduleService {
             }
             childSchedules.add(ScheduleUtils.createChildSchedule(req, currentDate));
             currentDate = ScheduleUtils.incrementDate(currentDate, req.getRepeat(), repeatEndDate);
+        }
+        if (childSchedules.isEmpty()) {
+            throw new BaseRuntimeException(ErrorCodeMsg.EVENT_DUPLICATE);
         }
         return childSchedules;
     }
@@ -449,4 +471,39 @@ public class UsersScheduleService {
             throw new BaseRuntimeException(ErrorCodeMsg.INVALID_EVENT_FORMAT);
         }
     }
+
+    private boolean checkDuplicateEvent(List<Schedules> allSchedule, String date, String startTime, String endTime) {
+        // Chuyển đổi input thành LocalDateTime
+        LocalDate eventDate = LocalDate.parse(date);
+        LocalTime newStartTime = LocalTime.parse(startTime);
+        LocalTime newEndTime = LocalTime.parse(endTime);
+        LocalDateTime newStart = LocalDateTime.of(eventDate, newStartTime);
+        LocalDateTime newEnd = LocalDateTime.of(eventDate, newEndTime);
+
+        // Tiền xử lý: gom tất cả các ChildSchedule theo ngày
+        Map<String, List<ChildSchedule>> scheduleMap = allSchedule.stream()
+                .flatMap(schedule -> schedule.getChildSchedules().stream())
+                .collect(Collectors.groupingBy(ChildSchedule::getDate));
+
+        // Lấy danh sách các ChildSchedule cho ngày cần kiểm tra (nếu có)
+        List<ChildSchedule> childSchedulesOnDate = scheduleMap.getOrDefault(date, Collections.emptyList());
+
+        // Kiểm tra từng ChildSchedule trong ngày
+        for (ChildSchedule child : childSchedulesOnDate) {
+            LocalTime existingStartTime = LocalTime.parse(child.getStartTime());
+            LocalTime existingEndTime = LocalTime.parse(child.getEndTime());
+            LocalDateTime existingStart = LocalDateTime.of(eventDate, existingStartTime);
+            LocalDateTime existingEnd = LocalDateTime.of(eventDate, existingEndTime);
+
+            // Kiểm tra overlap, xem xét trường hợp các khoảng thời gian liền nhau không bị coi là chồng lấn.
+            boolean isOverlap = !(newEnd.isEqual(existingStart) || newEnd.isBefore(existingStart)
+                    || newStart.isEqual(existingEnd) || newStart.isAfter(existingEnd));
+
+            if (isOverlap) {
+                return false; // Có trùng
+            }
+        }
+        return true; // Không có trùng
+    }
+
 }
